@@ -1,9 +1,14 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
-  imports: [],
+  imports: [
+    TypeOrmModule.forRoot({ timezone: 'Asia/Jakarta' }),
+    CategoriesModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
