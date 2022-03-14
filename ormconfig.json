@@ -1,14 +1,15 @@
 {
-  "type": "mysql",
+  "type": "postgres",
   "host": "localhost",
-  "port": 3306,
-  "username": "root",
-  "password": "root",
+  "port": 5432,
+  "username": "postgres",
+  "password": "rochmad1",
   "database": "skripsi-marketplace",
+  "logging": "all",
   "entities": [
     "dist/src/**/entities/*.js"
   ],
-  "migrationsTableName": "custom_migration_table",
+  "migrationsTableName": "migration_table",
   "migrations": [
     "dist/database/migrations/*.js"
   ],

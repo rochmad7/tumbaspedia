@@ -18,12 +18,12 @@ export class Category {
   @Column()
   description: string;
 
-  @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  @CreateDateColumn({ select: false })
+  created_at: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  @UpdateDateColumn({ select: false })
+  updated_at: Date;
 
-  @DeleteDateColumn({ name: 'deleted_at', select: false })
-  deletedAt: Date;
+  @DeleteDateColumn({ select: false })
+  deleted_at: Date;
 }

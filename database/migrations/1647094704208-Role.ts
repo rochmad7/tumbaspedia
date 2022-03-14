@@ -1,11 +1,11 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
-import { Category } from '../../src/categories/entities/category.entity';
+import { Role } from '../../src/roles/entities/role.entity';
 
-export class Category1647050720977 implements MigrationInterface {
+export class Role1647094704208 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'categories',
+        name: 'roles',
         columns: [
           {
             name: 'id',
@@ -17,20 +17,22 @@ export class Category1647050720977 implements MigrationInterface {
           {
             name: 'name',
             type: 'varchar',
+            length: '50',
           },
           {
             name: 'description',
-            type: 'text',
+            type: 'varchar',
+            length: '255',
           },
           {
             name: 'created_at',
             type: 'timestamp',
-            default: 'now()',
+            default: 'CURRENT_TIMESTAMP',
           },
           {
             name: 'updated_at',
             type: 'timestamp',
-            default: 'now()',
+            default: 'CURRENT_TIMESTAMP',
           },
           {
             name: 'deleted_at',
@@ -45,31 +47,31 @@ export class Category1647050720977 implements MigrationInterface {
     await queryRunner.manager
       .createQueryBuilder()
       .insert()
-      .into(Category)
+      .into(Role)
       .values([
         {
-          name: 'Kuliner',
-          description: 'Temukan produk kuliner terbaik',
-          created_at: new Date(),
-          updated_at: new Date(),
+          name: 'admin',
+          description: 'Administrator web',
+          createdAt: new Date(),
+          updatedAt: new Date(),
         },
         {
-          name: 'Jasa',
-          description: 'Temukan jasa terbaik',
-          created_at: new Date(),
-          updated_at: new Date(),
+          name: 'seller',
+          description: 'Penjual UMKM',
+          createdAt: new Date(),
+          updatedAt: new Date(),
         },
         {
-          name: 'Herbal',
-          description: 'Temukan produk herbal terbaik',
-          created_at: new Date(),
-          updated_at: new Date(),
+          name: 'buyer',
+          description: 'Pembeli UMKM',
+          createdAt: new Date(),
+          updatedAt: new Date(),
         },
       ])
       .execute();
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('categories');
+    await queryRunner.dropTable('roles');
   }
 }
