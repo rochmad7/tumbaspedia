@@ -1,27 +1,31 @@
-import { IsNotEmpty, IsString } from 'class-validator';
-import { Roles } from '../user.constant';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsPhoneNumber,
+  IsString,
+  MinLength,
+} from 'class-validator';
 
 export class CreateUserDto {
-  role_id = Roles.BUYER;
-
   @IsString()
   @IsNotEmpty()
   name: string;
 
-  @IsString()
   @IsNotEmpty()
+  @IsEmail()
   email: string;
 
   @IsString()
   @IsNotEmpty()
+  @MinLength(6)
   password: string;
 
   @IsString()
   @IsNotEmpty()
   address: string;
 
-  @IsString()
   @IsNotEmpty()
+  @IsPhoneNumber('ID')
   phone_number: string;
 
   profile_picture: string;

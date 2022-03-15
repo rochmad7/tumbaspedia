@@ -3,15 +3,18 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) {}
+    private cloudinaryService: CloudinaryService,
+  ) {
+  }
 
   async create(createUserDto: CreateUserDto): Promise<void> {
     const { password } = createUserDto;
@@ -57,8 +60,16 @@ export class UsersService {
     return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(
+    id: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UpdateResult> {
+    const updateUser = await this.userRepository.update(id, updateUserDto);
+    if (updateUser.affected === 0) {
+      throw new NotFoundException('User does not exist!');
+    }
+
+    return updateUser;
   }
 
   remove(id: number) {
@@ -71,5 +82,16 @@ export class UsersService {
       return user;
     }
     throw new NotFoundException('User does not exist!');
+  }
+
+  async uploadImageToCloudinary(
+    id: number,
+    file: Express.Multer.File,
+  ): Promise<UpdateResult> {
+    const uploadImage = await this.cloudinaryService.uploadImage(file);
+
+    return await this.userRepository.update(id, {
+      profile_picture: uploadImage.url,
+    });
   }
 }
