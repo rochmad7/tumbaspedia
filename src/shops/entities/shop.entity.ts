@@ -3,14 +3,15 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  OneToMany,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 
-@Entity('roles')
-export class Role {
+@Entity('shops')
+export class Shop {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -20,8 +21,23 @@ export class Role {
   @Column()
   description: string;
 
+  @Column()
+  shop_picture: string;
+
+  @Column()
+  is_open: boolean;
+
+  @Column({ default: false })
+  is_verified: boolean;
+
+  @Column()
+  opened_at: string;
+
+  @Column()
+  closed_at: string;
+
   @CreateDateColumn({ select: false })
-  created_at: Date;
+  created_at: string;
 
   @UpdateDateColumn({ select: false })
   updated_at: Date;
@@ -29,6 +45,7 @@ export class Role {
   @DeleteDateColumn({ select: false })
   deleted_at: Date;
 
-  @OneToMany((type) => User, (user) => user.role)
-  users: User[];
+  @OneToOne((type) => User, (user) => user.shop, { eager: true })
+  @JoinColumn({ name: 'owner_id' })
+  user: User;
 }

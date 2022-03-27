@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
+import { ShopsModule } from './shops/shops.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { memoryStorage } from 'multer';
     UsersModule,
     AuthModule,
     CloudinaryModule,
+    ShopsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -5,10 +5,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Role } from '../../roles/entities/role.entity';
+import { Shop } from '../../shops/entities/shop.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity('users')
 export class User {
@@ -22,6 +25,7 @@ export class User {
   email: string;
 
   @Column()
+  @Exclude({ toPlainOnly: true })
   password: string;
 
   @Column()
@@ -30,7 +34,7 @@ export class User {
   @Column()
   phone_number: string;
 
-  @Column({ default: 'assets/images/profile-pictures/default.jpg' })
+  @Column()
   profile_picture: string;
 
   @Column({ default: false })
@@ -48,4 +52,7 @@ export class User {
   @ManyToOne((type) => Role, (role) => role.users, { eager: true })
   @JoinColumn({ name: 'role' })
   role: Role;
+
+  @OneToOne((type) => Shop, (shop) => shop.user)
+  shop: Shop;
 }

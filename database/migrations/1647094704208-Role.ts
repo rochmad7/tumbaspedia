@@ -52,20 +52,20 @@ export class Role1647094704208 implements MigrationInterface {
         {
           name: 'admin',
           description: 'Administrator web',
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          created_at: new Date(),
+          updated_at: new Date(),
         },
         {
           name: 'seller',
           description: 'Penjual UMKM',
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          created_at: new Date(),
+          updated_at: new Date(),
         },
         {
           name: 'buyer',
           description: 'Pembeli UMKM',
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          created_at: new Date(),
+          updated_at: new Date(),
         },
       ])
       .execute();
