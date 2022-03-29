@@ -4,11 +4,13 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
+import { Product } from '../../products/entities/product.entity';
 
 @Entity('shops')
 export class Shop {
@@ -37,7 +39,7 @@ export class Shop {
   closed_at: string;
 
   @CreateDateColumn({ select: false })
-  created_at: string;
+  created_at: Date;
 
   @UpdateDateColumn({ select: false })
   updated_at: Date;
@@ -48,4 +50,7 @@ export class Shop {
   @OneToOne((type) => User, (user) => user.shop, { eager: true })
   @JoinColumn({ name: 'owner_id' })
   user: User;
+
+  @OneToMany((type) => Product, (product) => product.shop)
+  products: Product[];
 }

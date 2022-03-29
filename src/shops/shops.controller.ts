@@ -29,8 +29,8 @@ export class ShopsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @UseInterceptors(FileInterceptor('shop_picture'))
   create(
-    @Req() req,
     @Body() createShopDto: CreateShopDto,
+    @Req() req,
     @UploadedFile() file: Express.Multer.File,
   ) {
     return this.shopsService.create(req.user.id, createShopDto, file);

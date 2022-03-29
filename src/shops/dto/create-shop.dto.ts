@@ -1,9 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
-import { User } from '../../users/entities/user.entity';
 
 export class CreateShopDto {
-  user: User;
-
   @IsNotEmpty()
   name: string;
 

@@ -95,7 +95,7 @@ export class UsersService {
     const uploadImage = await this.cloudinaryService.uploadImage(file);
 
     return await this.userRepository.update(id, {
-      profile_picture: uploadImage.url,
+      profile_picture: uploadImage.secure_url,
     });
   }
 

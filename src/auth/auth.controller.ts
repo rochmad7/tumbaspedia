@@ -28,4 +28,12 @@ export class AuthController {
   ): Promise<{ access_token: string }> {
     return this.authService.login(authCredentialsDto);
   }
+
+  @Post('shop/login')
+  @HttpCode(HttpStatus.OK)
+  shopLogin(
+    @Body() authCredentialsDto: AuthCredentialsDto,
+  ): Promise<{ access_token: string }> {
+    return this.authService.shopLogin(authCredentialsDto);
+  }
 }

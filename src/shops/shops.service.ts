@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateShopDto } from './dto/create-shop.dto';
 import { UpdateShopDto } from './dto/update-shop.dto';
 import { Shop } from './entities/shop.entity';
@@ -17,35 +21,42 @@ export class ShopsService {
     private readonly cloudinaryService: CloudinaryService,
     private readonly usersService: UsersService,
     private readonly rolesService: RolesService,
-  ) {
-  }
+  ) {}
 
   async create(
     userId: number,
     createShopDto: CreateShopDto,
     file: Express.Multer.File,
   ): Promise<Shop> {
-    const uploadImage = await this.cloudinaryService.uploadImage(file);
     const user = await this.usersService.findOneById(userId);
     if (!user) {
       throw new NotFoundException('User not found');
     }
+
+    const uploadImage = await this.cloudinaryService.uploadImage(file);
+
     try {
       if (user.role.id !== ConstRole.SELLER) {
         const role = await this.rolesService.findOne(ConstRole.SELLER);
 
         await this.usersService.changeRole(userId, role);
       }
-      createShopDto.shop_picture = uploadImage.url;
-      createShopDto.is_open = true;
-      createShopDto.is_verified = true;
-      createShopDto.user = user;
-      // createShopDto.owner_id = user.id;
+      // createShopDto.shop_picture = uploadImage.url;
+      // createShopDto.is_open = true;
+      // createShopDto.is_verified = true;
+      // createShopDto.user = user;
 
-      const shop = this.shopsRepository.create(createShopDto);
+      const shop = this.shopsRepository.create({
+        ...createShopDto,
+        shop_picture: uploadImage.url,
+        is_open: true,
+        is_verified: true,
+        user: user,
+      });
       return await this.shopsRepository.save(shop);
     } catch (err) {
       await this.cloudinaryService.deleteImage(uploadImage.public_id);
+      throw new InternalServerErrorException('Something went wrong');
     }
   }
 
@@ -55,6 +66,17 @@ export class ShopsService {
 
   findOne(id: number): Promise<Shop> {
     const shop = this.shopsRepository.findOne(id);
+    if (!shop) {
+      throw new NotFoundException(`Shop not found`);
+    }
+
+    return shop;
+  }
+
+  findOneByUserID(id: number): Promise<Shop> {
+    const user = this.usersService.findOneById(id);
+
+    const shop = this.shopsRepository.findOne({ where: { user } });
     if (!shop) {
       throw new NotFoundException(`Shop not found`);
     }

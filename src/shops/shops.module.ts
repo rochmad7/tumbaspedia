@@ -21,5 +21,6 @@ import { RolesModule } from '../roles/roles.module';
   ],
   controllers: [ShopsController],
   providers: [ShopsService],
+  exports: [ShopsService],
 })
 export class ShopsModule {}

@@ -10,6 +10,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { ShopsModule } from './shops/shops.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ShopsModule } from './shops/shops.module';
     AuthModule,
     CloudinaryModule,
     ShopsModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
