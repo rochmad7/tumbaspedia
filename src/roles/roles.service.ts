@@ -3,7 +3,7 @@ import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role } from './entities/role.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class RolesService {
@@ -24,26 +24,20 @@ export class RolesService {
   }
 
   async findOne(id: number): Promise<Role> {
-    return await this.rolesRepository.findOne(id);
+    return await this.rolesRepository.findOne({ where: { id } });
   }
 
-  update(id: number, updateRoleDto: UpdateRoleDto): Promise<UpdateResult> {
-    const updateRole = this.rolesRepository.update(id, updateRoleDto);
+  async update(id: number, updateRoleDto: UpdateRoleDto): Promise<void> {
+    const updateRole = await this.rolesRepository.update(id, updateRoleDto);
     if (!updateRole) {
       throw new NotFoundException('Role not found');
     }
-
-    return updateRole;
   }
 
-  remove(id: number): Promise<UpdateResult> {
-    const deleteRole = this.rolesRepository.update(id, {
-      deleted_at: Date.now(),
-    });
+  async remove(id: number): Promise<void> {
+    const deleteRole = await this.rolesRepository.softDelete(id);
     if (!deleteRole) {
       throw new NotFoundException('Role not found');
     }
-
-    return deleteRole;
   }
 }

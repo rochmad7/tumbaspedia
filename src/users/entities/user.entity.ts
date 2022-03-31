@@ -5,6 +5,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -12,6 +13,7 @@ import {
 import { Role } from '../../roles/entities/role.entity';
 import { Shop } from '../../shops/entities/shop.entity';
 import { Exclude } from 'class-transformer';
+import { Transaction } from '../../transactions/entities/transaction.entity';
 
 @Entity('users')
 export class User {
@@ -55,4 +57,7 @@ export class User {
 
   @OneToOne((type) => Shop, (shop) => shop.user)
   shop: Shop;
+
+  @OneToMany((type) => Transaction, (transaction) => transaction.user)
+  transactions: Transaction[];
 }

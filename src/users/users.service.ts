@@ -47,7 +47,7 @@ export class UsersService {
   }
 
   findOneById(id: number): Promise<User> {
-    const user = this.userRepository.findOne(id);
+    const user = this.userRepository.findOne({ where: { id } });
     if (!user) {
       throw new NotFoundException('User does not exist!');
     }
@@ -56,7 +56,7 @@ export class UsersService {
   }
 
   findOneByEmail(email: string): Promise<User> {
-    const user = this.userRepository.findOne({ email });
+    const user = this.userRepository.findOne({ where: { email } });
     if (!user) {
       throw new NotFoundException('User does not exist!');
     }
@@ -81,7 +81,7 @@ export class UsersService {
   }
 
   async getByEmail(email: string): Promise<User> {
-    const user = await this.userRepository.findOne({ email });
+    const user = await this.userRepository.findOne({ where: { email } });
     if (user) {
       return user;
     }

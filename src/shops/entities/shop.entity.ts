@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Product } from '../../products/entities/product.entity';
+import { Transaction } from '../../transactions/entities/transaction.entity';
 
 @Entity('shops')
 export class Shop {
@@ -53,4 +54,7 @@ export class Shop {
 
   @OneToMany((type) => Product, (product) => product.shop)
   products: Product[];
+
+  @OneToMany((type) => Transaction, (transaction) => transaction.shop)
+  transactions: Transaction[];
 }

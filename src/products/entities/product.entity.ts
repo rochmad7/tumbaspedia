@@ -2,13 +2,16 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  Entity, JoinColumn,
+  Entity,
+  JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
-} from "typeorm";
+  UpdateDateColumn,
+} from 'typeorm';
 import { Category } from '../../categories/entities/category.entity';
 import { Shop } from '../../shops/entities/shop.entity';
+import { Transaction } from '../../transactions/entities/transaction.entity';
 
 @Entity('products')
 export class Product {
@@ -46,4 +49,7 @@ export class Product {
   @ManyToOne((type) => Shop, (shop) => shop.products)
   @JoinColumn({ name: 'shop_id' })
   shop: Shop;
+
+  @OneToMany((type) => Transaction, (transaction) => transaction.product)
+  transactions: Transaction[];
 }

@@ -25,10 +25,11 @@ export class Shop1647431573069 implements MigrationInterface {
           {
             name: 'name',
             type: 'varchar',
+            length: '100',
           },
           {
             name: 'description',
-            type: 'varchar',
+            type: 'text',
           },
           {
             name: 'shop_picture',

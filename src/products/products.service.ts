@@ -7,7 +7,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository, UpdateResult } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { ShopsService } from '../shops/shops.service';
 import { CategoriesService } from '../categories/categories.service';
@@ -22,14 +22,14 @@ export class ProductsService {
     private readonly shopsService: ShopsService,
     private readonly categoriesService: CategoriesService,
     private readonly usersService: UsersService,
-  ) {}
+  ) {
+  }
 
   async create(
-    shopId: number,
     createProductDto: CreateProductDto,
     file: Express.Multer.File,
   ): Promise<Product> {
-    const shop = await this.shopsService.findOne(shopId);
+    const shop = await this.shopsService.findOne(createProductDto.shop_id);
     if (!shop) {
       throw new NotFoundException('Shop not found');
     }
@@ -100,32 +100,22 @@ export class ProductsService {
   }
 
   async findOne(id: number): Promise<Product> {
-    return await this.productRepository.findOne(id);
+    return await this.productRepository.findOne({ where: { id } });
   }
 
-  async update(
-    id: number,
-    updateProductDto: UpdateProductDto,
-  ): Promise<UpdateResult> {
+  async update(id: number, updateProductDto: UpdateProductDto): Promise<void> {
     const updateProduct = await this.productRepository.update(id, {
       ...updateProductDto,
-      updated_at: new Date(),
     });
     if (updateProduct.affected === 0) {
       throw new NotFoundException('Product not found');
     }
-
-    return updateProduct;
   }
 
-  async remove(id: number): Promise<UpdateResult> {
-    const deleteProduct = await this.productRepository.update(id, {
-      deleted_at: new Date(),
-    });
+  async remove(id: number): Promise<void> {
+    const deleteProduct = await this.productRepository.softDelete(id);
     if (deleteProduct.affected === 0) {
       throw new NotFoundException('Product not found');
     }
-
-    return deleteProduct;
   }
 }

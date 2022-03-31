@@ -21,4 +21,6 @@ export class CreateProductDto {
 
   @IsNotEmpty()
   category_id: number;
+
+  shop_id: number;
 }

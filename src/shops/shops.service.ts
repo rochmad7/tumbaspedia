@@ -7,7 +7,7 @@ import { CreateShopDto } from './dto/create-shop.dto';
 import { UpdateShopDto } from './dto/update-shop.dto';
 import { Shop } from './entities/shop.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { UsersService } from '../users/users.service';
 import { RolesService } from '../roles/roles.service';
@@ -64,8 +64,8 @@ export class ShopsService {
     return await this.shopsRepository.find();
   }
 
-  findOne(id: number): Promise<Shop> {
-    const shop = this.shopsRepository.findOne(id);
+  async findOne(id: number): Promise<Shop> {
+    const shop = await this.shopsRepository.findOne({ where: { id } });
     if (!shop) {
       throw new NotFoundException(`Shop not found`);
     }
@@ -73,8 +73,8 @@ export class ShopsService {
     return shop;
   }
 
-  findOneByUserID(id: number): Promise<Shop> {
-    const user = this.usersService.findOneById(id);
+  async findOneByUserID(id: number): Promise<Shop> {
+    const user = await this.usersService.findOneById(id);
 
     const shop = this.shopsRepository.findOne({ where: { user } });
     if (!shop) {
@@ -84,28 +84,17 @@ export class ShopsService {
     return shop;
   }
 
-  async update(
-    id: number,
-    updateShopDto: UpdateShopDto,
-  ): Promise<UpdateResult> {
-    updateShopDto.updated_at = new Date();
+  async update(id: number, updateShopDto: UpdateShopDto): Promise<void> {
     const updateShop = await this.shopsRepository.update(id, updateShopDto);
     if (updateShop.affected === 0) {
       throw new NotFoundException(`Shop not found`);
     }
-
-    return updateShop;
   }
 
-  async remove(id: number): Promise<UpdateResult> {
-    const shop = await this.shopsRepository.findOne(id);
-    if (!shop) {
+  async remove(id: number): Promise<void> {
+    const deleteShop = await this.shopsRepository.softDelete(id);
+    if (deleteShop.affected === 0) {
       throw new NotFoundException(`Shop not found`);
     }
-
-    const deleteShop = await this.shopsRepository.update(id, {
-      deleted_at: new Date(),
-    });
-    return deleteShop;
   }
 }
