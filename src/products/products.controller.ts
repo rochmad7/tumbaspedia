@@ -34,7 +34,6 @@ export class ProductsController {
     @Req() req,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    createProductDto.shop_id = req.shop_id;
     return this.productsService.create(createProductDto, file);
   }
 

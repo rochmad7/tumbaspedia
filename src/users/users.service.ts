@@ -11,6 +11,7 @@ import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { Role } from '../roles/entities/role.entity';
+import { CLOUDINARY_FOLDER_USER, DEFAULT_PROFILE_PICTURE } from '../constants';
 
 @Injectable()
 export class UsersService {
@@ -29,6 +30,7 @@ export class UsersService {
     const user = this.userRepository.create({
       ...createUserDto,
       password: hashedPassword,
+      profile_picture: DEFAULT_PROFILE_PICTURE,
     });
     try {
       await this.userRepository.save(user);
@@ -42,12 +44,12 @@ export class UsersService {
     }
   }
 
-  findAll(): Promise<User[]> {
-    return this.userRepository.find();
+  async findAll(): Promise<User[]> {
+    return await this.userRepository.find();
   }
 
-  findOneById(id: number): Promise<User> {
-    const user = this.userRepository.findOne({ where: { id } });
+  async findOneById(id: number): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
       throw new NotFoundException('User does not exist!');
     }
@@ -55,8 +57,8 @@ export class UsersService {
     return user;
   }
 
-  findOneByEmail(email: string): Promise<User> {
-    const user = this.userRepository.findOne({ where: { email } });
+  async findOneByEmail(email: string): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { email } });
     if (!user) {
       throw new NotFoundException('User does not exist!');
     }
@@ -80,19 +82,14 @@ export class UsersService {
     return this.userRepository.delete(id);
   }
 
-  async getByEmail(email: string): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { email } });
-    if (user) {
-      return user;
-    }
-    throw new NotFoundException('User does not exist!');
-  }
-
   async uploadImageToCloudinary(
     id: number,
     file: Express.Multer.File,
   ): Promise<UpdateResult> {
-    const uploadImage = await this.cloudinaryService.uploadImage(file);
+    const uploadImage = await this.cloudinaryService.uploadImage(
+      file,
+      CLOUDINARY_FOLDER_USER,
+    );
 
     return await this.userRepository.update(id, {
       profile_picture: uploadImage.secure_url,

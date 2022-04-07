@@ -12,6 +12,7 @@ import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { ShopsService } from '../shops/shops.service';
 import { CategoriesService } from '../categories/categories.service';
 import { UsersService } from '../users/users.service';
+import { CLOUDINARY_FOLDER_PRODUCT } from '../constants';
 
 @Injectable()
 export class ProductsService {
@@ -22,8 +23,7 @@ export class ProductsService {
     private readonly shopsService: ShopsService,
     private readonly categoriesService: CategoriesService,
     private readonly usersService: UsersService,
-  ) {
-  }
+  ) {}
 
   async create(
     createProductDto: CreateProductDto,
@@ -41,7 +41,10 @@ export class ProductsService {
       throw new NotFoundException('Category not found');
     }
 
-    const uploadImage = await this.cloudinaryService.uploadImage(file);
+    const uploadImage = await this.cloudinaryService.uploadImage(
+      file,
+      CLOUDINARY_FOLDER_PRODUCT,
+    );
 
     try {
       const product = this.productRepository.create({

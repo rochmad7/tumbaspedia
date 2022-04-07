@@ -5,7 +5,6 @@ import {
   IsString,
   MinLength,
 } from 'class-validator';
-import { DEFAULT_PROFILE_PICTURE } from '../../constants';
 
 export class CreateUserDto {
   @IsString()
@@ -29,5 +28,5 @@ export class CreateUserDto {
   @IsPhoneNumber('ID')
   phone_number: string;
 
-  profile_picture = DEFAULT_PROFILE_PICTURE;
+  profile_picture: string;
 }

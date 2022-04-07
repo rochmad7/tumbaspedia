@@ -10,8 +10,7 @@ export class RolesService {
   constructor(
     @InjectRepository(Role)
     private readonly rolesRepository: Repository<Role>,
-  ) {
-  }
+  ) {}
 
   async create(createRoleDto: CreateRoleDto): Promise<Role> {
     const role = this.rolesRepository.create(createRoleDto);
@@ -19,8 +18,8 @@ export class RolesService {
     return await this.rolesRepository.save(role);
   }
 
-  findAll(): Promise<Role[]> {
-    return this.rolesRepository.find();
+  async findAll(): Promise<Role[]> {
+    return await this.rolesRepository.find();
   }
 
   async findOne(id: number): Promise<Role> {

@@ -33,7 +33,7 @@ export class TransactionsController {
   @Roles(ConstRole.BUYER, ConstRole.SELLER, ConstRole.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   findAll(@Req() req) {
-    if (req.user.role === ConstRole.ADMIN) {
+    if (req.user.role_id === ConstRole.ADMIN) {
       return this.transactionsService.findAll();
     } else {
       return this.transactionsService.findAllByUserId(req.user.id);

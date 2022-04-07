@@ -11,7 +11,7 @@ import { Repository } from 'typeorm';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { UsersService } from '../users/users.service';
 import { RolesService } from '../roles/roles.service';
-import { ConstRole } from '../constants';
+import { CLOUDINARY_FOLDER_SHOP, ConstRole } from '../constants';
 
 @Injectable()
 export class ShopsService {
@@ -33,7 +33,10 @@ export class ShopsService {
       throw new NotFoundException('User not found');
     }
 
-    const uploadImage = await this.cloudinaryService.uploadImage(file);
+    const uploadImage = await this.cloudinaryService.uploadImage(
+      file,
+      CLOUDINARY_FOLDER_SHOP,
+    );
 
     try {
       if (user.role.id !== ConstRole.SELLER) {

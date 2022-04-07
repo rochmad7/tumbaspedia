@@ -10,8 +10,7 @@ export class CategoriesService {
   constructor(
     @InjectRepository(Category)
     private readonly categoriesRepository: Repository<Category>,
-  ) {
-  }
+  ) {}
 
   async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
     const { name, description } = createCategoryDto;
@@ -29,7 +28,7 @@ export class CategoriesService {
   }
 
   async findOne(id: number): Promise<Category> {
-    const category = this.categoriesRepository.findOne({ where: { id } });
+    const category = await this.categoriesRepository.findOne({ where: { id } });
     if (!category) {
       throw new NotFoundException(`Category with ID "${id}" not found`);
     }
