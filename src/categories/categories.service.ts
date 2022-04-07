@@ -23,7 +23,13 @@ export class CategoriesService {
     return category;
   }
 
-  async findAll(): Promise<Category[]> {
+  async findAll(limit: number): Promise<Category[]> {
+    if (limit) {
+      return await this.categoriesRepository.find({
+        take: limit,
+      });
+    }
+
     return await this.categoriesRepository.find();
   }
 

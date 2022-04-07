@@ -6,6 +6,7 @@ import { User } from './entities/user.entity';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
+import { RolesModule } from '../roles/roles.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { memoryStorage } from 'multer';
       storage: memoryStorage(), // use memory storage for having the buffer
     }),
     CloudinaryModule,
+    RolesModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],

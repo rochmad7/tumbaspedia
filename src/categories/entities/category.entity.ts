@@ -20,6 +20,9 @@ export class Category {
   @Column()
   description: string;
 
+  @Column()
+  icon: string;
+
   @CreateDateColumn({ select: false })
   created_at: Date;
 

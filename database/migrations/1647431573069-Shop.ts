@@ -33,7 +33,7 @@ export class Shop1647431573069 implements MigrationInterface {
           },
           {
             name: 'shop_picture',
-            type: 'varchar',
+            type: 'text',
           },
           {
             name: 'is_open',

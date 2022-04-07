@@ -21,7 +21,6 @@ export class User1647094708562 implements MigrationInterface {
           {
             name: 'role',
             type: 'int',
-            default: 3, // buyer
           },
           {
             name: 'name',
@@ -40,8 +39,7 @@ export class User1647094708562 implements MigrationInterface {
           },
           {
             name: 'address',
-            type: 'varchar',
-            length: '255',
+            type: 'text',
           },
           {
             name: 'phone_number',
@@ -50,8 +48,7 @@ export class User1647094708562 implements MigrationInterface {
           },
           {
             name: 'profile_picture',
-            type: 'varchar',
-            length: '255',
+            type: 'text',
           },
           {
             name: 'is_verified',

@@ -17,12 +17,11 @@ export class Role1647094704208 implements MigrationInterface {
           {
             name: 'name',
             type: 'varchar',
-            length: '50',
+            length: '100',
           },
           {
             name: 'description',
-            type: 'varchar',
-            length: '255',
+            type: 'text',
           },
           {
             name: 'created_at',

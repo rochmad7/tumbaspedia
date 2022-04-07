@@ -38,7 +38,7 @@ export class Product1648390803109 implements MigrationInterface {
           },
           {
             name: 'product_picture',
-            type: 'varchar',
+            type: 'text',
           },
           {
             name: 'stock',

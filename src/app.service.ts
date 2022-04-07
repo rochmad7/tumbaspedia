@@ -6,3 +6,13 @@ export class AppService {
     return 'Hello World!';
   }
 }
+
+export class SuccessResponse {
+  message: string;
+  data: any;
+}
+
+export class ErrorResponse {
+  message: string;
+  errors: [string];
+}

@@ -11,7 +11,12 @@ import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { Role } from '../roles/entities/role.entity';
-import { CLOUDINARY_FOLDER_USER, DEFAULT_PROFILE_PICTURE } from '../constants';
+import {
+  CLOUDINARY_FOLDER_USER,
+  ConstRole,
+  DEFAULT_PROFILE_PICTURE,
+} from '../constants';
+import { RolesService } from '../roles/roles.service';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +24,7 @@ export class UsersService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private cloudinaryService: CloudinaryService,
+    private readonly rolesService: RolesService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<void> {
@@ -27,9 +33,12 @@ export class UsersService {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    const role = await this.rolesService.findOne(ConstRole.BUYER);
+
     const user = this.userRepository.create({
       ...createUserDto,
       password: hashedPassword,
+      role,
       profile_picture: DEFAULT_PROFILE_PICTURE,
     });
     try {
