@@ -20,6 +20,7 @@ import { ConstRole } from '../constants';
 import { JwtAuthGuard } from '../auth/jwt/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles/roles.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ErrorResponse, SuccessResponse } from '../app.service';
 
 @Controller('products')
 export class ProductsController {
@@ -29,35 +30,97 @@ export class ProductsController {
   @Roles(ConstRole.ADMIN, ConstRole.SELLER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @UseInterceptors(FileInterceptor('product_picture'))
-  create(
+  async create(
     @Body() createProductDto: CreateProductDto,
     @Req() req,
     @UploadedFile() file: Express.Multer.File,
-  ) {
-    return this.productsService.create(createProductDto, file);
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const product = await this.productsService.create(createProductDto, file);
+      return {
+        message: 'Produk berhasil dibuat',
+        data: product,
+      };
+    } catch (error) {
+      return {
+        message: 'Produk gagal dibuat',
+        errors: error,
+      };
+    }
   }
 
   @Get()
-  findAll(@Query() query) {
-    return this.productsService.findAll(
-      query['keyword'],
-      query['order-by'],
-      query['page'],
-    );
+  async findAll(@Query() query): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const products = await this.productsService.findAll(
+        query['keyword'],
+        query['order-by'],
+        query['page'],
+      );
+      return {
+        message: 'Produk berhasil ditemukan',
+        data: products,
+      };
+    } catch (error) {
+      return {
+        message: 'Produk gagal ditemukan',
+        errors: error,
+      };
+    }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productsService.findOne(+id);
+  async findOne(
+    @Param('id') id: string,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const product = await this.productsService.findOne(+id);
+      return {
+        message: 'Produk berhasil ditemukan',
+        data: product,
+      };
+    } catch (error) {
+      return {
+        message: 'Produk gagal ditemukan',
+        errors: error,
+      };
+    }
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productsService.update(+id, updateProductDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const product = await this.productsService.update(+id, updateProductDto);
+      return {
+        message: 'Produk berhasil diubah',
+        data: null,
+      };
+    } catch (error) {
+      return {
+        message: 'Produk gagal diubah',
+        errors: error,
+      };
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productsService.remove(+id);
+  async remove(
+    @Param('id') id: string,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      await this.productsService.remove(+id);
+      return {
+        message: 'Produk berhasil dihapus',
+        data: null,
+      };
+    } catch (error) {
+      return {
+        message: 'Produk gagal dihapus',
+        errors: error,
+      };
+    }
   }
 }

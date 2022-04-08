@@ -7,7 +7,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { Role } from '../roles/entities/role.entity';
@@ -75,34 +75,35 @@ export class UsersService {
     return user;
   }
 
-  async update(
-    id: number,
-    updateUserDto: UpdateUserDto,
-  ): Promise<UpdateResult> {
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<void> {
     const updateUser = await this.userRepository.update(id, updateUserDto);
     if (updateUser.affected === 0) {
       throw new NotFoundException('User does not exist!');
     }
-
-    return updateUser;
   }
 
-  remove(id: number): Promise<DeleteResult> {
-    return this.userRepository.delete(id);
+  async remove(id: number): Promise<void> {
+    const removeUser = await this.userRepository.softDelete(id);
+    if (removeUser.affected === 0) {
+      throw new NotFoundException('User does not exist!');
+    }
   }
 
   async uploadImageToCloudinary(
     id: number,
     file: Express.Multer.File,
-  ): Promise<UpdateResult> {
+  ): Promise<void> {
     const uploadImage = await this.cloudinaryService.uploadImage(
       file,
       CLOUDINARY_FOLDER_USER,
     );
 
-    return await this.userRepository.update(id, {
+    const updateUser = await this.userRepository.update(id, {
       profile_picture: uploadImage.secure_url,
     });
+    if (updateUser.affected === 0) {
+      throw new NotFoundException('User does not exist!');
+    }
   }
 
   async changeRole(id: number, role: Role): Promise<UpdateResult> {

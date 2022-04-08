@@ -19,6 +19,7 @@ import { JwtAuthGuard } from '../auth/jwt/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles/roles.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ConstRole } from '../constants';
+import { ErrorResponse, SuccessResponse } from '../app.service';
 
 @Controller('shops')
 export class ShopsController {
@@ -28,35 +29,101 @@ export class ShopsController {
   @Roles(ConstRole.ADMIN, ConstRole.SELLER, ConstRole.BUYER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @UseInterceptors(FileInterceptor('shop_picture'))
-  create(
+  async create(
     @Body() createShopDto: CreateShopDto,
     @Req() req,
     @UploadedFile() file: Express.Multer.File,
-  ) {
-    return this.shopsService.create(req.user.id, createShopDto, file);
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const shop = await this.shopsService.create(
+        req.user.id,
+        createShopDto,
+        file,
+      );
+      return {
+        message: 'Toko berhasil dibuat',
+        data: shop,
+      };
+    } catch (error) {
+      return {
+        message: 'Toko gagal dibuat',
+        errors: error,
+      };
+    }
   }
 
   @Get()
-  findAll() {
-    return this.shopsService.findAll();
+  async findAll(): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const shops = await this.shopsService.findAll();
+      return {
+        message: 'Berhasil mengambil semua toko',
+        data: shops,
+      };
+    } catch (error) {
+      return {
+        message: 'Gagal mengambil semua toko',
+        errors: error,
+      };
+    }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.shopsService.findOne(+id);
+  async findOne(
+    @Param('id') id: string,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const shop = await this.shopsService.findOne(+id);
+      return {
+        message: 'Berhasil mengambil toko',
+        data: shop,
+      };
+    } catch (error) {
+      return {
+        message: 'Gagal mengambil toko',
+        errors: error,
+      };
+    }
   }
 
   @Roles(ConstRole.ADMIN, ConstRole.SELLER, ConstRole.BUYER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateShopDto: UpdateShopDto) {
-    return this.shopsService.update(+id, updateShopDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateShopDto: UpdateShopDto,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      await this.shopsService.update(+id, updateShopDto);
+      return {
+        message: 'Berhasil mengubah toko',
+        data: null,
+      };
+    } catch (error) {
+      return {
+        message: 'Gagal mengubah toko',
+        errors: error,
+      };
+    }
   }
 
   @Roles(ConstRole.ADMIN, ConstRole.SELLER, ConstRole.BUYER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.shopsService.remove(+id);
+  async remove(
+    @Param('id') id: string,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      await this.shopsService.remove(+id);
+      return {
+        message: 'Berhasil menghapus toko',
+        data: null,
+      };
+    } catch (error) {
+      return {
+        message: 'Gagal menghapus toko',
+        errors: error,
+      };
+    }
   }
 }

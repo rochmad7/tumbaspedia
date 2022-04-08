@@ -18,47 +18,126 @@ import { JwtAuthGuard } from '../auth/jwt/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles/roles.guard';
 import { Roles } from '../auth/roles/roles.decorator';
 import { ConstRole } from '../constants';
+import { ErrorResponse, SuccessResponse } from '../app.service';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const user = await this.usersService.create(createUserDto);
+      return {
+        message: 'User berhasil dibuat',
+        data: user,
+      };
+    } catch (error) {
+      return {
+        message: 'User gagal dibuat',
+        errors: error,
+      };
+    }
   }
 
   @Get()
   @Roles(ConstRole.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  findAll() {
-    return this.usersService.findAll();
+  async findAll(): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const users = await this.usersService.findAll();
+      return {
+        message: 'Berhasil mengambil semua user',
+        data: users,
+      };
+    } catch (error) {
+      return {
+        message: 'Gagal mengambil semua user',
+        errors: error,
+      };
+    }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOneById(+id);
+  async findOne(
+    @Param('id') id: string,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const user = await this.usersService.findOneById(+id);
+      return {
+        message: 'Berhasil mengambil user',
+        data: user,
+      };
+    } catch (error) {
+      return {
+        message: 'Gagal mengambil user',
+        errors: error,
+      };
+    }
   }
 
   @Patch(':id')
   @Roles(ConstRole.ADMIN, ConstRole.SELLER, ConstRole.BUYER)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      await this.usersService.update(+id, updateUserDto);
+      return {
+        message: 'Berhasil mengubah user',
+        data: null,
+      };
+    } catch (error) {
+      return {
+        message: 'Gagal mengubah user',
+        errors: error,
+      };
+    }
   }
 
   @Delete(':id')
   @Roles(ConstRole.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  async remove(
+    @Param('id') id: string,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      await this.usersService.remove(+id);
+      return {
+        message: 'Berhasil menghapus user',
+        data: null,
+      };
+    } catch (error) {
+      return {
+        message: 'Gagal menghapus user',
+        errors: error,
+      };
+    }
   }
 
   @Post(':id/upload')
   @Roles(ConstRole.ADMIN, ConstRole.SELLER, ConstRole.BUYER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @UseInterceptors(FileInterceptor('profile_picture'))
-  upload(@Param('id') id: string, @UploadedFile() file: Express.Multer.File) {
-    return this.usersService.uploadImageToCloudinary(+id, file);
+  async upload(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      await this.usersService.uploadImageToCloudinary(+id, file);
+      return {
+        message: 'Berhasil mengubah foto profil',
+        data: null,
+      };
+    } catch (error) {
+      return {
+        message: 'Gagal mengubah foto profil',
+        errors: error,
+      };
+    }
   }
 }

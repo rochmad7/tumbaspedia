@@ -49,24 +49,64 @@ export class CategoriesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categoriesService.findOne(+id);
+  async findOne(
+    @Param('id') id: string,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const categories = await this.categoriesService.findOne(+id);
+      return {
+        message: 'Data kategori berhasil diambil',
+        data: categories,
+      };
+    } catch (error) {
+      return {
+        message: 'Terjadi kesalahan pada server',
+        errors: error,
+      };
+    }
   }
 
   @Patch(':id')
   @Roles(ConstRole.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
-  ) {
-    return this.categoriesService.update(+id, updateCategoryDto);
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const categories = await this.categoriesService.update(
+        +id,
+        updateCategoryDto,
+      );
+      return {
+        message: 'Data kategori berhasil diubah',
+        data: null,
+      };
+    } catch (error) {
+      return {
+        message: 'Terjadi kesalahan pada server',
+        errors: error,
+      };
+    }
   }
 
   @Delete(':id')
   @Roles(ConstRole.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  remove(@Param('id') id: string) {
-    return this.categoriesService.remove(+id);
+  async remove(
+    @Param('id') id: string,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const categories = await this.categoriesService.remove(+id);
+      return {
+        message: 'Data kategori berhasil dihapus',
+        data: null,
+      };
+    } catch (error) {
+      return {
+        message: 'Terjadi kesalahan pada server',
+        errors: error,
+      };
+    }
   }
 }
