@@ -60,7 +60,7 @@ export class AuthController {
     @Body() authCredentialsDto: AuthCredentialsDto,
   ): Promise<SuccessResponse | ErrorResponse> {
     try {
-      const login = this.authService.shopLogin(authCredentialsDto);
+      const login = await this.authService.shopLogin(authCredentialsDto);
       return {
         message: 'Login berhasil',
         data: login,

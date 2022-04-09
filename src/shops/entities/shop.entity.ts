@@ -25,6 +25,9 @@ export class Shop {
   description: string;
 
   @Column()
+  address: string;
+
+  @Column()
   shop_picture: string;
 
   @Column()

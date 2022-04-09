@@ -1,13 +1,9 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateShopDto } from './dto/create-shop.dto';
 import { UpdateShopDto } from './dto/update-shop.dto';
 import { Shop } from './entities/shop.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { UsersService } from '../users/users.service';
 import { RolesService } from '../roles/roles.service';
@@ -39,31 +35,36 @@ export class ShopsService {
     );
 
     try {
-      if (user.role.id !== ConstRole.SELLER) {
+      if (user.role.id == ConstRole.BUYER) {
         const role = await this.rolesService.findOne(ConstRole.SELLER);
 
         await this.usersService.changeRole(userId, role);
       }
-      // createShopDto.shop_picture = uploadImage.url;
-      // createShopDto.is_open = true;
-      // createShopDto.is_verified = true;
-      // createShopDto.user = user;
 
-      const shop = this.shopsRepository.create({
+      const shop = await this.shopsRepository.create({
         ...createShopDto,
         shop_picture: uploadImage.url,
         is_open: true,
         is_verified: true,
         user: user,
       });
+
       return await this.shopsRepository.save(shop);
     } catch (err) {
       await this.cloudinaryService.deleteImage(uploadImage.public_id);
-      throw new InternalServerErrorException('Something went wrong');
+      throw new Error(err);
     }
   }
 
-  async findAll(): Promise<Shop[]> {
+  async findAll(search: string): Promise<Shop[]> {
+    if (search) {
+      return await this.shopsRepository.find({
+        where: {
+          name: Like(`%${search}%`),
+        },
+      });
+    }
+
     return await this.shopsRepository.find();
   }
 
@@ -87,8 +88,20 @@ export class ShopsService {
     return shop;
   }
 
-  async update(id: number, updateShopDto: UpdateShopDto): Promise<void> {
-    const updateShop = await this.shopsRepository.update(id, updateShopDto);
+  async update(
+    id: number,
+    updateShopDto: UpdateShopDto,
+    file: Express.Multer.File,
+  ): Promise<void> {
+    const uploadImage = await this.cloudinaryService.uploadImage(
+      file,
+      CLOUDINARY_FOLDER_SHOP,
+    );
+
+    const updateShop = await this.shopsRepository.update(id, {
+      ...updateShopDto,
+      shop_picture: uploadImage.secure_url,
+    });
     if (updateShop.affected === 0) {
       throw new NotFoundException(`Shop not found`);
     }

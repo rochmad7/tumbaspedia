@@ -7,6 +7,9 @@ export class CreateShopDto {
   @IsNotEmpty()
   description: string;
 
+  @IsNotEmpty()
+  address: string;
+
   shop_picture: string;
 
   is_open: boolean;

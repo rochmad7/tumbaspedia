@@ -63,15 +63,17 @@ export class ProductsService {
   }
 
   async findAll(
-    keyword: string,
+    search: string,
     orderBy: string,
     page: number,
+    shopId: number,
+    categoryId: number,
   ): Promise<Product[]> {
-    if (keyword) {
+    if (search) {
       if (orderBy) {
         return await this.productRepository.find({
           where: {
-            name: Like(`%${keyword}%`),
+            name: Like(`%${search}%`),
           },
           order: {
             [orderBy]: 'DESC',
@@ -82,7 +84,7 @@ export class ProductsService {
 
       return await this.productRepository.find({
         where: {
-          name: Like(`%${keyword}%`),
+          name: Like(`%${search}%`),
         },
         skip: page * 10,
       });
@@ -97,7 +99,29 @@ export class ProductsService {
       });
     }
 
-    return this.productRepository.find({
+    if (shopId) {
+      const shop = await this.shopsService.findOne(shopId);
+
+      return await this.productRepository.find({
+        where: {
+          shop,
+        },
+        skip: page * 10,
+      });
+    }
+
+    if (categoryId) {
+      const category = await this.categoriesService.findOne(categoryId);
+
+      return await this.productRepository.find({
+        where: {
+          category,
+        },
+        skip: page * 10,
+      });
+    }
+
+    return await this.productRepository.find({
       skip: page * 10,
     });
   }

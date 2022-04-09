@@ -5,12 +5,12 @@ import {
   Get,
   Param,
   Patch,
-  Post,
+  Post, Query,
   Req,
   UploadedFile,
   UseGuards,
-  UseInterceptors,
-} from '@nestjs/common';
+  UseInterceptors
+} from "@nestjs/common";
 import { ShopsService } from './shops.service';
 import { CreateShopDto } from './dto/create-shop.dto';
 import { UpdateShopDto } from './dto/update-shop.dto';
@@ -53,9 +53,9 @@ export class ShopsController {
   }
 
   @Get()
-  async findAll(): Promise<SuccessResponse | ErrorResponse> {
+  async findAll(@Query() query): Promise<SuccessResponse | ErrorResponse> {
     try {
-      const shops = await this.shopsService.findAll();
+      const shops = await this.shopsService.findAll(query['search']);
       return {
         message: 'Berhasil mengambil semua toko',
         data: shops,
@@ -88,13 +88,15 @@ export class ShopsController {
 
   @Roles(ConstRole.ADMIN, ConstRole.SELLER, ConstRole.BUYER)
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseInterceptors(FileInterceptor('shop_picture'))
   @Patch(':id')
   async update(
     @Param('id') id: string,
     @Body() updateShopDto: UpdateShopDto,
+    @UploadedFile() file: Express.Multer.File,
   ): Promise<SuccessResponse | ErrorResponse> {
     try {
-      await this.shopsService.update(+id, updateShopDto);
+      await this.shopsService.update(+id, updateShopDto, file);
       return {
         message: 'Berhasil mengubah toko',
         data: null,

@@ -32,6 +32,10 @@ export class Shop1647431573069 implements MigrationInterface {
             type: 'text',
           },
           {
+            name: 'address',
+            type: 'text',
+          },
+          {
             name: 'shop_picture',
             type: 'text',
           },

@@ -42,11 +42,13 @@ export class Product {
   @DeleteDateColumn({ select: false })
   deleted_at: Date;
 
-  @ManyToOne((type) => Category, (category) => category.products)
+  @ManyToOne((type) => Category, (category) => category.products, {
+    eager: true,
+  })
   @JoinColumn({ name: 'category_id' })
   category: Category;
 
-  @ManyToOne((type) => Shop, (shop) => shop.products)
+  @ManyToOne((type) => Shop, (shop) => shop.products, { eager: true })
   @JoinColumn({ name: 'shop_id' })
   shop: Shop;
 

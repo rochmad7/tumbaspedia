@@ -53,9 +53,11 @@ export class ProductsController {
   async findAll(@Query() query): Promise<SuccessResponse | ErrorResponse> {
     try {
       const products = await this.productsService.findAll(
-        query['keyword'],
-        query['order-by'],
+        query['search'],
+        query['orderBy'],
         query['page'],
+        query['shop'],
+        query['category'],
       );
       return {
         message: 'Produk berhasil ditemukan',
