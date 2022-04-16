@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { ProductsController } from './products.controller';
 import { Product } from './entities/product.entity';
@@ -7,6 +7,7 @@ import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 import { UsersModule } from '../users/users.module';
 import { ShopsModule } from '../shops/shops.module';
 import { CategoriesModule } from '../categories/categories.module';
+import { TransactionsModule } from '../transactions/transactions.module';
 
 @Module({
   imports: [

@@ -1,4 +1,6 @@
 import {
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -13,6 +15,7 @@ import { ShopsService } from '../shops/shops.service';
 import { CategoriesService } from '../categories/categories.service';
 import { UsersService } from '../users/users.service';
 import { CLOUDINARY_FOLDER_PRODUCT } from '../constants';
+import { TransactionsService } from '../transactions/transactions.service';
 
 @Injectable()
 export class ProductsService {
@@ -64,66 +67,56 @@ export class ProductsService {
 
   async findAll(
     search: string,
-    orderBy: string,
+    sortBy: string,
+    sortType: string,
     page: number,
     shopId: number,
     categoryId: number,
   ): Promise<Product[]> {
+    if (page === undefined) {
+      page = 0;
+    }
+    let whereQuery = '';
+
     if (search) {
-      if (orderBy) {
-        return await this.productRepository.find({
-          where: {
-            name: Like(`%${search}%`),
-          },
-          order: {
-            [orderBy]: 'DESC',
-          },
-          skip: page * 10,
-        });
+      whereQuery = `LOWER(product.name) LIKE '%${search.toLowerCase()}%'`;
+      if (shopId) {
+        if (categoryId) {
+          whereQuery += `AND product.category_id = ${categoryId}`;
+        }
+        whereQuery += `AND product.shop_id = ${shopId}`;
       }
-
-      return await this.productRepository.find({
-        where: {
-          name: Like(`%${search}%`),
-        },
-        skip: page * 10,
-      });
+      if (categoryId) {
+        whereQuery += `AND product.category_id = ${categoryId}`;
+      }
+    } else {
+      if (shopId) {
+        if (categoryId) {
+          whereQuery += `product.category_id = ${categoryId} AND`;
+        }
+        whereQuery += `product.shop_id = ${shopId}`;
+      }
+      if (categoryId) {
+        whereQuery += `product.category_id = ${categoryId}`;
+      }
     }
 
-    if (orderBy) {
-      return await this.productRepository.find({
-        order: {
-          [orderBy]: 'DESC',
-        },
-        skip: page * 10,
-      });
+    if (sortBy === 'date') {
+      sortBy = 'created_at';
     }
 
-    if (shopId) {
-      const shop = await this.shopsService.findOne(shopId);
-
-      return await this.productRepository.find({
-        where: {
-          shop,
-        },
-        skip: page * 10,
-      });
-    }
-
-    if (categoryId) {
-      const category = await this.categoriesService.findOne(categoryId);
-
-      return await this.productRepository.find({
-        where: {
-          category,
-        },
-        skip: page * 10,
-      });
-    }
-
-    return await this.productRepository.find({
-      skip: page * 10,
-    });
+    return await this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.shop', 'shop', 'shop.id = product.shop_id')
+      .leftJoinAndSelect(
+        'product.category',
+        'category',
+        'category.id = product.category_id',
+      )
+      .where(whereQuery)
+      .orderBy(sortBy, sortType === 'asc' ? 'ASC' : 'DESC')
+      .skip(page * 10)
+      .getMany();
   }
 
   async findOne(id: number): Promise<Product> {
@@ -142,6 +135,19 @@ export class ProductsService {
   async remove(id: number): Promise<void> {
     const deleteProduct = await this.productRepository.softDelete(id);
     if (deleteProduct.affected === 0) {
+      throw new NotFoundException('Product not found');
+    }
+  }
+
+  async updateSold(id: number, sold: number): Promise<void> {
+    const product = await this.productRepository.findOne({ where: { id } });
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+    const updateProduct = await this.productRepository.update(id, {
+      sold: product.sold + sold,
+    });
+    if (updateProduct.affected === 0) {
       throw new NotFoundException('Product not found');
     }
   }

@@ -54,7 +54,8 @@ export class ProductsController {
     try {
       const products = await this.productsService.findAll(
         query['search'],
-        query['orderBy'],
+        query['sortBy'],
+        query['sortType'],
         query['page'],
         query['shop'],
         query['category'],

@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { Transaction } from './entities/transaction.entity';
@@ -45,6 +50,10 @@ export class TransactionsService {
       product,
     });
 
+    await this.productsService.update(createTransactionDto.product_id, {
+      stock: product.stock - createTransactionDto.quantity,
+    });
+
     return await this.transactionRepository.save(transaction);
   }
 
@@ -87,6 +96,14 @@ export class TransactionsService {
     if (updateTransaction.affected === 0) {
       throw new NotFoundException('Transaction not found');
     }
+
+    if (updateTransactionDto.status === 'completed') {
+      const transaction = await this.findOne(id, updateTransactionDto.user_id);
+      await this.productsService.updateSold(
+        transaction.product.id,
+        transaction.quantity,
+      );
+    }
   }
 
   async remove(id: number): Promise<void> {
@@ -94,5 +111,17 @@ export class TransactionsService {
     if (transaction.affected === 0) {
       throw new NotFoundException('Transaction not found');
     }
+  }
+
+  async findBestSeller(skip: number, take: number) {
+    return this.transactionRepository
+      .createQueryBuilder('transaction')
+      .select('transaction.product_id')
+      .addSelect('COUNT(transaction.product_id)', 'total')
+      .groupBy('transaction.product_id')
+      .orderBy('total', 'DESC')
+      .limit(take)
+      .skip(skip)
+      .getRawMany();
   }
 }

@@ -32,10 +32,10 @@ export class Transaction {
   @Column({ type: 'timestamp' })
   confirmed_at: Date;
 
-  @CreateDateColumn({ select: false })
+  @CreateDateColumn()
   created_at: Date;
 
-  @UpdateDateColumn({ select: false })
+  @UpdateDateColumn()
   updated_at: Date;
 
   @DeleteDateColumn({ select: false })

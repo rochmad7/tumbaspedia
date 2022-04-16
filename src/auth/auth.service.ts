@@ -7,6 +7,7 @@ import { UsersService } from '../users/users.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { ConstRole } from '../constants';
 import { ShopsService } from '../shops/shops.service';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +23,7 @@ export class AuthService {
 
   async login(
     authCredentialsDto: AuthCredentialsDto,
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ access_token: string; user: User }> {
     const { email, password } = authCredentialsDto;
     const user = await this.usersService.findOneByEmail(email);
 
@@ -31,7 +32,7 @@ export class AuthService {
         user: { id: user.id, role_id: user.role.id },
       };
       const accessToken = this.jwtService.sign(payload);
-      return { access_token: accessToken };
+      return { access_token: accessToken, user };
     } else {
       throw new UnauthorizedException('Invalid credentials');
     }

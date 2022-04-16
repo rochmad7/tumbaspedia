@@ -41,6 +41,11 @@ export class Product1648390803109 implements MigrationInterface {
             type: 'text',
           },
           {
+            name: 'sold',
+            type: 'int',
+            default: 0,
+          },
+          {
             name: 'stock',
             type: 'int',
           },

@@ -11,6 +11,8 @@ export class CreateProductDto {
 
   product_picture: string;
 
+  sold: number;
+
   @IsNotEmpty()
   // @Min(0)
   stock: number;

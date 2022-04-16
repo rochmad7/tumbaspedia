@@ -28,6 +28,9 @@ export class Product {
   product_picture: string;
 
   @Column()
+  sold: number;
+
+  @Column()
   stock: number;
 
   @Column()
