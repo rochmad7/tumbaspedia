@@ -12,6 +12,7 @@ import { memoryStorage } from 'multer';
 import { ShopsModule } from './shops/shops.module';
 import { ProductsModule } from './products/products.module';
 import { TransactionsModule } from './transactions/transactions.module';
+import { ProductPicturesModule } from './product-pictures/product-pictures.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { TransactionsModule } from './transactions/transactions.module';
     ShopsModule,
     ProductsModule,
     TransactionsModule,
+    ProductPicturesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

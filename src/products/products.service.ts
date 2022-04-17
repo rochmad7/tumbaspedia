@@ -102,7 +102,7 @@ export class ProductsService {
     }
 
     if (sortBy === 'date') {
-      sortBy = 'created_at';
+      sortBy = 'product.created_at';
     }
 
     return await this.productRepository
@@ -113,6 +113,7 @@ export class ProductsService {
         'category',
         'category.id = product.category_id',
       )
+      .leftJoinAndSelect('shop.user', 'user', 'user.id = shop.owner_id')
       .where(whereQuery)
       .orderBy(sortBy, sortType === 'asc' ? 'ASC' : 'DESC')
       .skip(page * 10)

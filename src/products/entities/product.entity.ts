@@ -6,12 +6,14 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Category } from '../../categories/entities/category.entity';
 import { Shop } from '../../shops/entities/shop.entity';
 import { Transaction } from '../../transactions/entities/transaction.entity';
+import { ProductPicture } from '../../product-pictures/entities/product-picture.entity';
 
 @Entity('products')
 export class Product {
@@ -57,4 +59,10 @@ export class Product {
 
   @OneToMany((type) => Transaction, (transaction) => transaction.product)
   transactions: Transaction[];
+
+  @OneToMany(
+    (type) => ProductPicture,
+    (product_pictures) => product_pictures.product,
+  )
+  product_pictures: ProductPicture;
 }
