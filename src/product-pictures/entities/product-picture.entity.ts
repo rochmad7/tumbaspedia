@@ -13,8 +13,8 @@ export class ProductPicture {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('text', { array: true })
-  picture_urls: string[];
+  @Column()
+  picture_url: string;
 
   @ManyToOne((type) => Product, (product) => product.product_pictures)
   @JoinColumn({ name: 'product_id' })

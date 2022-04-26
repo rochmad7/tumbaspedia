@@ -65,7 +65,8 @@ export class ProductPicturesController {
     @Param('id') id: string,
   ): Promise<SuccessResponse | ErrorResponse> {
     try {
-      const productPicture = await this.productPicturesService.findOneByProductId(+id);
+      const productPicture =
+        await this.productPicturesService.findPicturesByProductId(+id);
       return {
         data: productPicture,
         message: 'Product picture found successfully',

@@ -24,9 +24,7 @@ export class ProductPicturesService {
       file2?: Express.Multer.File[];
       file3?: Express.Multer.File[];
     },
-  ): Promise<ProductPicture> {
-    const productPictures: string[] = [];
-
+  ): Promise<void> {
     const product = await this.productsService.findOne(
       createProductPictureDto.product_id,
     );
@@ -37,7 +35,12 @@ export class ProductPicturesService {
         CLOUDINARY_FOLDER_PRODUCT,
       );
 
-      productPictures.push(uploadResult.secure_url);
+      const productPicture = this.productPicturesRepository.create({
+        product,
+        picture_url: uploadResult.secure_url,
+      });
+
+      await this.productPicturesRepository.save(productPicture);
     }
 
     if (files.file2) {
@@ -46,7 +49,12 @@ export class ProductPicturesService {
         CLOUDINARY_FOLDER_PRODUCT,
       );
 
-      productPictures.push(uploadResult.secure_url);
+      const productPicture = this.productPicturesRepository.create({
+        product,
+        picture_url: uploadResult.secure_url,
+      });
+
+      await this.productPicturesRepository.save(productPicture);
     }
 
     if (files.file3) {
@@ -55,25 +63,23 @@ export class ProductPicturesService {
         CLOUDINARY_FOLDER_PRODUCT,
       );
 
-      productPictures.push(uploadResult.secure_url);
+      const productPicture = this.productPicturesRepository.create({
+        product,
+        picture_url: uploadResult.secure_url,
+      });
+
+      await this.productPicturesRepository.save(productPicture);
     }
-
-    const productPicture = this.productPicturesRepository.create({
-      product,
-      picture_urls: productPictures,
-    });
-
-    return await this.productPicturesRepository.save(productPicture);
   }
 
   findAll() {
     return `This action returns all productPictures`;
   }
 
-  async findOneByProductId(productId: number): Promise<ProductPicture> {
+  async findPicturesByProductId(productId: number): Promise<ProductPicture[]> {
     const product = await this.productsService.findOne(productId);
 
-    return await this.productPicturesRepository.findOne({
+    return await this.productPicturesRepository.find({
       where: { product },
     });
   }
