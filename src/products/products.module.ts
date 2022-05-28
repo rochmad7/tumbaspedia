@@ -14,7 +14,7 @@ import { TransactionsModule } from '../transactions/transactions.module';
     TypeOrmModule.forFeature([Product]),
     CloudinaryModule,
     UsersModule,
-    ShopsModule,
+    forwardRef(() => ShopsModule),
     CategoriesModule,
   ],
   controllers: [ProductsController],

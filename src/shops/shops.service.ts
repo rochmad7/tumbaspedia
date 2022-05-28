@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateShopDto } from './dto/create-shop.dto';
 import { UpdateShopDto } from './dto/update-shop.dto';
 import { Shop } from './entities/shop.entity';
@@ -8,6 +13,10 @@ import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { UsersService } from '../users/users.service';
 import { RolesService } from '../roles/roles.service';
 import { CLOUDINARY_FOLDER_SHOP, ConstRole } from '../constants';
+import { ProductsService } from '../products/products.service';
+import { Product } from '../products/entities/product.entity';
+import { TransactionsService } from '../transactions/transactions.service';
+import { Transaction } from '../transactions/entities/transaction.entity';
 
 @Injectable()
 export class ShopsService {
@@ -17,6 +26,10 @@ export class ShopsService {
     private readonly cloudinaryService: CloudinaryService,
     private readonly usersService: UsersService,
     private readonly rolesService: RolesService,
+    @Inject(forwardRef(() => ProductsService))
+    private readonly productsService: ProductsService,
+    @Inject(forwardRef(() => TransactionsService))
+    private readonly transactionsService: TransactionsService,
   ) {}
 
   async create(
@@ -112,5 +125,23 @@ export class ShopsService {
     if (deleteShop.affected === 0) {
       throw new NotFoundException(`Shop not found`);
     }
+  }
+
+  async findProducts(id: number): Promise<Product[]> {
+    const productShop = await this.productsService.findAllByShop(id);
+    if (!productShop) {
+      throw new NotFoundException(`Products not found`);
+    }
+
+    return productShop;
+  }
+
+  async findTransactions(id: number): Promise<Transaction[]> {
+    const transactionShop = await this.transactionsService.findAllByShopId(id);
+    if (!transactionShop) {
+      throw new NotFoundException(`Transactions not found`);
+    }
+
+    return transactionShop;
   }
 }

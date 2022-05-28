@@ -5,12 +5,13 @@ import {
   Get,
   Param,
   Patch,
-  Post, Query,
+  Post,
+  Query,
   Req,
   UploadedFile,
   UseGuards,
-  UseInterceptors
-} from "@nestjs/common";
+  UseInterceptors,
+} from '@nestjs/common';
 import { ShopsService } from './shops.service';
 import { CreateShopDto } from './dto/create-shop.dto';
 import { UpdateShopDto } from './dto/update-shop.dto';
@@ -47,6 +48,26 @@ export class ShopsController {
     } catch (error) {
       return {
         message: 'Toko gagal dibuat',
+        errors: error,
+      };
+    }
+  }
+
+  @Roles(ConstRole.ADMIN, ConstRole.SELLER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('/transactions')
+  async findTransactions(@Req() req): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const transactions = await this.shopsService.findTransactions(
+        +req.user.shop.id,
+      );
+      return {
+        message: 'Berhasil mengambil semua transaksi',
+        data: transactions,
+      };
+    } catch (error) {
+      return {
+        message: 'Gagal mengambil semua transaksi',
         errors: error,
       };
     }
@@ -124,6 +145,24 @@ export class ShopsController {
     } catch (error) {
       return {
         message: 'Gagal menghapus toko',
+        errors: error,
+      };
+    }
+  }
+
+  @Get('/:id/products')
+  async findProducts(
+    @Param('id') id: string,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const products = await this.shopsService.findProducts(+id);
+      return {
+        message: 'Berhasil mengambil semua produk',
+        data: products,
+      };
+    } catch (error) {
+      return {
+        message: 'Gagal mengambil semua produk',
         errors: error,
       };
     }

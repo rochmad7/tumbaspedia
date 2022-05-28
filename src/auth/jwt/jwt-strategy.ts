@@ -1,15 +1,17 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { JwtPayload } from './jwt-payload.interface';
+import { JwtPayload, ShopJwtPayload } from './jwt-payload.interface';
 import { ConfigService } from '@nestjs/config';
 import { User } from '../../users/entities/user.entity';
 import { UsersService } from '../../users/users.service';
+import { ShopsService } from '../../shops/shops.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private usersService: UsersService,
+    private shopsService: ShopsService,
     private configService: ConfigService,
   ) {
     super({
@@ -25,6 +27,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!findUser) {
       throw new UnauthorizedException();
     }
+
+    const shop = await this.shopsService.findOneByUserID(user.id);
+    if (!shop) {
+      throw new UnauthorizedException();
+    }
+    findUser.shop = shop;
 
     return findUser;
   }

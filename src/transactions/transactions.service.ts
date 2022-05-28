@@ -18,6 +18,7 @@ export class TransactionsService {
   constructor(
     @InjectRepository(Transaction)
     private readonly transactionRepository: Repository<Transaction>,
+    @Inject(forwardRef(() => ShopsService))
     private readonly shopsService: ShopsService,
     private readonly usersService: UsersService,
     private readonly productsService: ProductsService,
@@ -123,5 +124,29 @@ export class TransactionsService {
       .limit(take)
       .skip(skip)
       .getRawMany();
+  }
+
+  async findAllByShopId(shopId: number, skip?: number, take?: number) {
+    // return this.transactionRepository
+    //   .createQueryBuilder('transaction')
+    //   .where('transaction.shop_id = :shopId', { shopId })
+    //   .orderBy('transaction.created_at', 'DESC')
+    //   .skip(skip)
+    //   .take(take)
+    //   .getMany();
+
+    return await this.transactionRepository.find({
+      where: {
+        shop: {
+          id: shopId,
+        },
+      },
+      relations: ['shop', 'user', 'product'],
+      order: {
+        created_at: 'DESC',
+      },
+      skip,
+      take,
+    });
   }
 }

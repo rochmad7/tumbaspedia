@@ -23,6 +23,7 @@ export class ProductsService {
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
     private readonly cloudinaryService: CloudinaryService,
+    @Inject(forwardRef(() => ShopsService))
     private readonly shopsService: ShopsService,
     private readonly categoriesService: CategoriesService,
     private readonly usersService: UsersService,
@@ -151,5 +152,19 @@ export class ProductsService {
     if (updateProduct.affected === 0) {
       throw new NotFoundException('Product not found');
     }
+  }
+
+  async findAllByShop(shopId: number): Promise<Product[]> {
+    return await this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.shop', 'shop', 'shop.id = product.shop_id')
+      .leftJoinAndSelect(
+        'product.category',
+        'category',
+        'category.id = product.category_id',
+      )
+      .leftJoinAndSelect('shop.user', 'user', 'user.id = shop.owner_id')
+      .where('product.shop_id = :shopId', { shopId })
+      .getMany();
   }
 }

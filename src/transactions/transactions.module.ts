@@ -11,8 +11,8 @@ import { UsersModule } from '../users/users.module';
   imports: [
     TypeOrmModule.forFeature([Transaction]),
     ProductsModule,
-    ShopsModule,
     UsersModule,
+    forwardRef(() => ShopsModule),
   ],
   controllers: [TransactionsController],
   providers: [TransactionsService],

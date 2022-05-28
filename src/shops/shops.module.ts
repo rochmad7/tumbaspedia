@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ShopsService } from './shops.service';
 import { ShopsController } from './shops.controller';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
@@ -8,6 +8,8 @@ import { memoryStorage } from 'multer';
 import { Shop } from './entities/shop.entity';
 import { UsersModule } from '../users/users.module';
 import { RolesModule } from '../roles/roles.module';
+import { ProductsModule } from '../products/products.module';
+import { TransactionsModule } from "../transactions/transactions.module";
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { RolesModule } from '../roles/roles.module';
     }),
     CloudinaryModule,
     UsersModule,
+    forwardRef(() => ProductsModule),
+    forwardRef(() => TransactionsModule),
     RolesModule,
   ],
   controllers: [ShopsController],
