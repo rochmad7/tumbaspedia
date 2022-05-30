@@ -26,6 +26,44 @@ import { ErrorResponse, SuccessResponse } from '../app.service';
 export class ShopsController {
   constructor(private readonly shopsService: ShopsService) {}
 
+  @Roles(ConstRole.ADMIN, ConstRole.SELLER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('/my-products')
+  async findProducts(@Req() req): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const products = await this.shopsService.findProducts(+req.user.shop.id);
+      return {
+        message: 'Berhasil mengambil semua produk',
+        data: products,
+      };
+    } catch (error) {
+      return {
+        message: 'Gagal mengambil semua produk',
+        errors: error,
+      };
+    }
+  }
+
+  @Roles(ConstRole.ADMIN, ConstRole.SELLER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('/transactions')
+  async findTransactions(@Req() req): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const transactions = await this.shopsService.findTransactions(
+        +req.user.shop.id,
+      );
+      return {
+        message: 'Berhasil mengambil semua transaksi',
+        data: transactions,
+      };
+    } catch (error) {
+      return {
+        message: 'Gagal mengambil semua transaksi',
+        errors: error,
+      };
+    }
+  }
+
   @Post()
   @Roles(ConstRole.ADMIN, ConstRole.SELLER, ConstRole.BUYER)
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -48,26 +86,6 @@ export class ShopsController {
     } catch (error) {
       return {
         message: 'Toko gagal dibuat',
-        errors: error,
-      };
-    }
-  }
-
-  @Roles(ConstRole.ADMIN, ConstRole.SELLER)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get('/transactions')
-  async findTransactions(@Req() req): Promise<SuccessResponse | ErrorResponse> {
-    try {
-      const transactions = await this.shopsService.findTransactions(
-        +req.user.shop.id,
-      );
-      return {
-        message: 'Berhasil mengambil semua transaksi',
-        data: transactions,
-      };
-    } catch (error) {
-      return {
-        message: 'Gagal mengambil semua transaksi',
         errors: error,
       };
     }
@@ -145,24 +163,6 @@ export class ShopsController {
     } catch (error) {
       return {
         message: 'Gagal menghapus toko',
-        errors: error,
-      };
-    }
-  }
-
-  @Get('/:id/products')
-  async findProducts(
-    @Param('id') id: string,
-  ): Promise<SuccessResponse | ErrorResponse> {
-    try {
-      const products = await this.shopsService.findProducts(+id);
-      return {
-        message: 'Berhasil mengambil semua produk',
-        data: products,
-      };
-    } catch (error) {
-      return {
-        message: 'Gagal mengambil semua produk',
         errors: error,
       };
     }
