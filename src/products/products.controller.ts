@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
   Req,
   UploadedFile,
@@ -91,12 +92,16 @@ export class ProductsController {
   }
 
   @Patch(':id')
+  @Roles(ConstRole.ADMIN, ConstRole.SELLER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseInterceptors(FileInterceptor('product_picture'))
   async update(
     @Param('id') id: string,
     @Body() updateProductDto: UpdateProductDto,
+    @UploadedFile() file: Express.Multer.File,
   ): Promise<SuccessResponse | ErrorResponse> {
     try {
-      const product = await this.productsService.update(+id, updateProductDto);
+      await this.productsService.update(+id, updateProductDto, file);
       return {
         message: 'Produk berhasil diubah',
         data: null,
@@ -110,6 +115,9 @@ export class ProductsController {
   }
 
   @Delete(':id')
+  @Roles(ConstRole.ADMIN, ConstRole.SELLER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseInterceptors(FileInterceptor('product_picture'))
   async remove(
     @Param('id') id: string,
   ): Promise<SuccessResponse | ErrorResponse> {

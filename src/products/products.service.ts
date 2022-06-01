@@ -83,22 +83,22 @@ export class ProductsService {
       whereQuery = `LOWER(product.name) LIKE '%${search.toLowerCase()}%'`;
       if (shopId) {
         if (categoryId) {
-          whereQuery += `AND product.category_id = ${categoryId}`;
+          whereQuery += ` AND product.category_id = ${categoryId}`;
         }
-        whereQuery += `AND product.shop_id = ${shopId}`;
+        whereQuery += ` AND product.shop_id = ${shopId}`;
       }
       if (categoryId) {
-        whereQuery += `AND product.category_id = ${categoryId}`;
+        whereQuery += ` AND product.category_id = ${categoryId}`;
       }
     } else {
       if (shopId) {
         if (categoryId) {
           whereQuery += `product.category_id = ${categoryId} AND`;
         }
-        whereQuery += `product.shop_id = ${shopId}`;
+        whereQuery += ` product.shop_id = ${shopId}`;
       }
       if (categoryId) {
-        whereQuery += `product.category_id = ${categoryId}`;
+        whereQuery += ` AND product.category_id = ${categoryId}`;
       }
     }
 
@@ -125,13 +125,45 @@ export class ProductsService {
     return await this.productRepository.findOne({ where: { id } });
   }
 
-  async update(id: number, updateProductDto: UpdateProductDto): Promise<void> {
-    const updateProduct = await this.productRepository.update(id, {
-      ...updateProductDto,
-    });
-    if (updateProduct.affected === 0) {
-      throw new NotFoundException('Product not found');
+  async update(
+    id: number,
+    updateProductDto: UpdateProductDto,
+    file?: Express.Multer.File,
+  ): Promise<void> {
+    // const category = await this.categoriesService.findOne(
+    //   updateProductDto.category_id,
+    // );
+    // if (!category) {
+    //   throw new NotFoundException('Category not found');
+    // }
+
+    if (file) {
+      const uploadImage = await this.cloudinaryService.uploadImage(
+        file,
+        CLOUDINARY_FOLDER_PRODUCT,
+      );
+      updateProductDto.product_picture = uploadImage.secure_url;
     }
+
+    await this.productRepository
+      .createQueryBuilder()
+      .update(Product)
+      .set({
+        ...(updateProductDto.name && { name: updateProductDto.name }),
+        ...(updateProductDto.description && {
+          description: updateProductDto.description,
+        }),
+        ...(updateProductDto.price && { price: updateProductDto.price }),
+        ...(updateProductDto.stock && { stock: updateProductDto.stock }),
+        ...(updateProductDto.product_picture && {
+          product_picture: updateProductDto.product_picture,
+        }),
+        ...(updateProductDto.category_id && {
+          category_id: updateProductDto.category_id,
+        }),
+      })
+      .where('id = :id', { id })
+      .execute();
   }
 
   async remove(id: number): Promise<void> {
@@ -152,19 +184,5 @@ export class ProductsService {
     if (updateProduct.affected === 0) {
       throw new NotFoundException('Product not found');
     }
-  }
-
-  async findAllByShop(shopId: number): Promise<Product[]> {
-    return await this.productRepository
-      .createQueryBuilder('product')
-      .leftJoinAndSelect('product.shop', 'shop', 'shop.id = product.shop_id')
-      .leftJoinAndSelect(
-        'product.category',
-        'category',
-        'category.id = product.category_id',
-      )
-      .leftJoinAndSelect('shop.user', 'user', 'user.id = shop.owner_id')
-      .where('product.shop_id = :shopId', { shopId })
-      .getMany();
   }
 }

@@ -29,9 +29,19 @@ export class ShopsController {
   @Roles(ConstRole.ADMIN, ConstRole.SELLER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('/my-products')
-  async findProducts(@Req() req): Promise<SuccessResponse | ErrorResponse> {
+  async findProducts(
+    @Req() req,
+    @Query() query,
+  ): Promise<SuccessResponse | ErrorResponse> {
     try {
-      const products = await this.shopsService.findProducts(+req.user.shop.id);
+      const products = await this.shopsService.findProducts(
+        query['search'],
+        query['sortBy'],
+        query['sortType'],
+        query['page'],
+        +req.user.shop.id,
+        query['category'],
+      );
       return {
         message: 'Berhasil mengambil semua produk',
         data: products,

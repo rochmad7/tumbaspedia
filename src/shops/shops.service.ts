@@ -127,8 +127,22 @@ export class ShopsService {
     }
   }
 
-  async findProducts(id: number): Promise<Product[]> {
-    const productShop = await this.productsService.findAllByShop(id);
+  async findProducts(
+    search: string,
+    sortBy: string,
+    sortType: string,
+    page: number,
+    shopId: number,
+    categoryId: number,
+  ): Promise<Product[]> {
+    const productShop = await this.productsService.findAll(
+      search,
+      sortBy,
+      sortType,
+      page,
+      shopId,
+      categoryId,
+    );
     if (!productShop) {
       throw new NotFoundException(`Products not found`);
     }
