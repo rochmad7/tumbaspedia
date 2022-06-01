@@ -38,7 +38,7 @@ export class Product {
   @Column()
   price: number;
 
-  @CreateDateColumn({ select: false })
+  @CreateDateColumn()
   created_at: Date;
 
   @UpdateDateColumn({ select: false })

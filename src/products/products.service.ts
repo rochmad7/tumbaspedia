@@ -103,8 +103,11 @@ export class ProductsService {
     }
 
     if (sortBy === 'date') {
-      sortBy = 'product.created_at';
+      sortBy = 'created_at';
     }
+    sortBy == undefined
+      ? (sortBy = `random()`)
+      : (sortBy = `product.${sortBy}`);
 
     return await this.productRepository
       .createQueryBuilder('product')
@@ -117,7 +120,7 @@ export class ProductsService {
       .leftJoinAndSelect('shop.user', 'user', 'user.id = shop.owner_id')
       .where(whereQuery)
       .orderBy(sortBy, sortType === 'asc' ? 'ASC' : 'DESC')
-      .skip(page * 10)
+      .skip((page - 1) * 10)
       .getMany();
   }
 
@@ -130,12 +133,12 @@ export class ProductsService {
     updateProductDto: UpdateProductDto,
     file?: Express.Multer.File,
   ): Promise<void> {
-    // const category = await this.categoriesService.findOne(
-    //   updateProductDto.category_id,
-    // );
-    // if (!category) {
-    //   throw new NotFoundException('Category not found');
-    // }
+    const category = await this.categoriesService.findOne(
+      updateProductDto.category_id,
+    );
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
 
     if (file) {
       const uploadImage = await this.cloudinaryService.uploadImage(
@@ -145,25 +148,21 @@ export class ProductsService {
       updateProductDto.product_picture = uploadImage.secure_url;
     }
 
-    await this.productRepository
-      .createQueryBuilder()
-      .update(Product)
-      .set({
-        ...(updateProductDto.name && { name: updateProductDto.name }),
-        ...(updateProductDto.description && {
-          description: updateProductDto.description,
-        }),
-        ...(updateProductDto.price && { price: updateProductDto.price }),
-        ...(updateProductDto.stock && { stock: updateProductDto.stock }),
-        ...(updateProductDto.product_picture && {
-          product_picture: updateProductDto.product_picture,
-        }),
-        ...(updateProductDto.category_id && {
-          category_id: updateProductDto.category_id,
-        }),
-      })
-      .where('id = :id', { id })
-      .execute();
+    const updateProduct = await this.productRepository.update(id, {
+      ...(updateProductDto.category_id && { category }),
+      ...(updateProductDto.name && { name: updateProductDto.name }),
+      ...(updateProductDto.description && {
+        description: updateProductDto.description,
+      }),
+      ...(updateProductDto.price && { price: updateProductDto.price }),
+      ...(updateProductDto.stock && { stock: updateProductDto.stock }),
+      ...(updateProductDto.product_picture && {
+        product_picture: updateProductDto.product_picture,
+      }),
+    });
+    if (updateProduct.affected === 0) {
+      throw new NotFoundException('Product not found');
+    }
   }
 
   async remove(id: number): Promise<void> {
