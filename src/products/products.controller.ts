@@ -100,7 +100,6 @@ export class ProductsController {
     @Body() updateProductDto: UpdateProductDto,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<SuccessResponse | ErrorResponse> {
-    console.log('updateProductDto', updateProductDto);
     try {
       await this.productsService.update(+id, updateProductDto, file);
       return {

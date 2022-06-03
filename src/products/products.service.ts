@@ -16,6 +16,7 @@ import { CategoriesService } from '../categories/categories.service';
 import { UsersService } from '../users/users.service';
 import { CLOUDINARY_FOLDER_PRODUCT } from '../constants';
 import { TransactionsService } from '../transactions/transactions.service';
+import { Category } from '../categories/entities/category.entity';
 
 @Injectable()
 export class ProductsService {
@@ -133,11 +134,14 @@ export class ProductsService {
     updateProductDto: UpdateProductDto,
     file?: Express.Multer.File,
   ): Promise<void> {
-    const category = await this.categoriesService.findOne(
-      updateProductDto.category_id,
-    );
-    if (!category) {
-      throw new NotFoundException('Category not found');
+    let category = new Category();
+    if (updateProductDto.category_id) {
+      category = await this.categoriesService.findOne(
+        updateProductDto.category_id,
+      );
+      if (!category) {
+        throw new NotFoundException('Category not found');
+      }
     }
 
     if (file) {
