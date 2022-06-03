@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -97,9 +98,15 @@ export class ProductsController {
   @UseInterceptors(FileInterceptor('product_picture'))
   async update(
     @Param('id') id: string,
+    @Req() req,
     @Body() updateProductDto: UpdateProductDto,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<SuccessResponse | ErrorResponse> {
+    const productOwned = await this.productsService.findOne(+id);
+    if (productOwned.shop.id !== req.user.shop.id) {
+      throw new NotFoundException('Produk tidak ditemukan');
+    }
+
     try {
       await this.productsService.update(+id, updateProductDto, file);
       return {
@@ -120,7 +127,13 @@ export class ProductsController {
   @UseInterceptors(FileInterceptor('product_picture'))
   async remove(
     @Param('id') id: string,
+    @Req() req,
   ): Promise<SuccessResponse | ErrorResponse> {
+    const productOwned = await this.productsService.findOne(+id);
+    if (productOwned.shop.id !== req.user.shop.id) {
+      throw new NotFoundException('Produk tidak ditemukan');
+    }
+
     try {
       await this.productsService.remove(+id);
       return {
