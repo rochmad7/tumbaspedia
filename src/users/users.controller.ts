@@ -6,6 +6,8 @@ import {
   Param,
   Patch,
   Post,
+  Req,
+  UnauthorizedException,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -14,6 +16,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import * as bcrypt from 'bcrypt';
 import { JwtAuthGuard } from '../auth/jwt/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles/roles.guard';
 import { Roles } from '../auth/roles/roles.decorator';
@@ -73,6 +76,35 @@ export class UsersController {
     } catch (error) {
       return {
         message: 'Gagal mengambil user',
+        errors: error,
+      };
+    }
+  }
+
+  @Patch('change-password')
+  @Roles(ConstRole.ADMIN, ConstRole.SELLER, ConstRole.BUYER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async changePassword(
+    @Body('old_password') oldPassword: string,
+    @Body('new_password') newPassword: string,
+    @Req() req: any,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    const user = await this.usersService.findOneById(req.user.id);
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      throw new UnauthorizedException('Password lama tidak sesuai');
+    }
+
+    try {
+      await this.usersService.changePassword(+req.user.id, newPassword);
+      return {
+        message: 'Berhasil mengubah password',
+        data: null,
+      };
+    } catch (error) {
+      return {
+        message: 'Gagal mengubah password',
         errors: error,
       };
     }

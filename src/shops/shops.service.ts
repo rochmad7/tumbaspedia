@@ -106,14 +106,17 @@ export class ShopsService {
     updateShopDto: UpdateShopDto,
     file: Express.Multer.File,
   ): Promise<void> {
-    const uploadImage = await this.cloudinaryService.uploadImage(
-      file,
-      CLOUDINARY_FOLDER_SHOP,
-    );
+    if (file) {
+      const uploadImage = await this.cloudinaryService.uploadImage(
+        file,
+        CLOUDINARY_FOLDER_SHOP,
+      );
+
+      updateShopDto.shop_picture = uploadImage.secure_url;
+    }
 
     const updateShop = await this.shopsRepository.update(id, {
       ...updateShopDto,
-      shop_picture: uploadImage.secure_url,
     });
     if (updateShop.affected === 0) {
       throw new NotFoundException(`Shop not found`);

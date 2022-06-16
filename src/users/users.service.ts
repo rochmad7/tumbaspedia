@@ -111,4 +111,13 @@ export class UsersService {
       role,
     });
   }
+
+  async changePassword(id: number, password: string): Promise<UpdateResult> {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    return await this.userRepository.update(id, {
+      password: hashedPassword,
+    });
+  }
 }
