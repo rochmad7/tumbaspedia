@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductPictureDto } from './dto/create-product-picture.dto';
 import { UpdateProductPictureDto } from './dto/update-product-picture.dto';
 import { ProductPicture } from './entities/product-picture.entity';
@@ -72,10 +72,6 @@ export class ProductPicturesService {
     }
   }
 
-  findAll() {
-    return `This action returns all productPictures`;
-  }
-
   async findPicturesByProductId(productId: number): Promise<ProductPicture[]> {
     const product = await this.productsService.findOne(productId);
 
@@ -88,7 +84,15 @@ export class ProductPicturesService {
     return `This action updates a #${id} productPicture`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} productPicture`;
+  async remove(productId: number) {
+    const product = await this.productsService.findOne(productId);
+
+    const deletedProductPicture = await this.productPicturesRepository.update(
+      { product },
+      { deleted_at: new Date() },
+    );
+    if (deletedProductPicture.affected === 0) {
+      throw new NotFoundException('Product picture not found');
+    }
   }
 }

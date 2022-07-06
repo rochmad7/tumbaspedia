@@ -1,10 +1,13 @@
 import {
   Column,
+  CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Product } from '../../products/entities/product.entity';
 
@@ -19,4 +22,13 @@ export class ProductPicture {
   @ManyToOne((type) => Product, (product) => product.product_pictures)
   @JoinColumn({ name: 'product_id' })
   product: Product;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
+
+  @DeleteDateColumn({ select: false })
+  deleted_at: Date;
 }

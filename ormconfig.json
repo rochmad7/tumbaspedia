@@ -5,7 +5,7 @@
   "username": "postgres",
   "password": "rochmad1",
   "database": "skripsi-marketplace",
-  "logging": "all",
+  "logging": true,
   "entities": [
     "dist/src/**/entities/*.js"
   ],

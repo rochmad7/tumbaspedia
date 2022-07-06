@@ -8,6 +8,7 @@ import {
   Delete,
   UseInterceptors,
   UploadedFiles,
+  Query,
 } from '@nestjs/common';
 import { ProductPicturesService } from './product-pictures.service';
 import { CreateProductPictureDto } from './dto/create-product-picture.dto';
@@ -31,6 +32,7 @@ export class ProductPicturesController {
   )
   async create(
     @Body() createProductPictureDto: CreateProductPictureDto,
+    @Query('product_id') productId: string,
     @UploadedFiles()
     files: {
       file1?: Express.Multer.File[];
@@ -38,6 +40,7 @@ export class ProductPicturesController {
       file3?: Express.Multer.File[];
     },
   ): Promise<SuccessResponse | ErrorResponse> {
+    createProductPictureDto.product_id = +productId;
     try {
       const productPicture = await this.productPicturesService.create(
         createProductPictureDto,
@@ -55,18 +58,18 @@ export class ProductPicturesController {
     }
   }
 
-  @Get()
-  findAll() {
-    return this.productPicturesService.findAll();
-  }
+  // @Get()
+  // findAll() {
+  //   return this.productPicturesService.findAll();
+  // }
 
-  @Get(':id')
+  @Get()
   async findOne(
-    @Param('id') id: string,
+    @Query('product_id') productId: string,
   ): Promise<SuccessResponse | ErrorResponse> {
     try {
       const productPicture =
-        await this.productPicturesService.findPicturesByProductId(+id);
+        await this.productPicturesService.findPicturesByProductId(+productId);
       return {
         data: productPicture,
         message: 'Product picture found successfully',
@@ -81,14 +84,30 @@ export class ProductPicturesController {
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Query('product_id') productId: string,
     @Body() updateProductPictureDto: UpdateProductPictureDto,
   ) {
-    return this.productPicturesService.update(+id, updateProductPictureDto);
+    return this.productPicturesService.update(
+      +productId,
+      updateProductPictureDto,
+    );
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productPicturesService.remove(+id);
+  @Delete()
+  async remove(
+    @Query('product_id') productId: string,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      await this.productPicturesService.remove(+productId);
+      return {
+        message: 'Product picture found successfully',
+        data: null,
+      };
+    } catch (error) {
+      return {
+        errors: error,
+        message: 'Product picture not found',
+      };
+    }
   }
 }
