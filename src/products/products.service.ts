@@ -75,8 +75,8 @@ export class ProductsService {
     shopId: number,
     categoryId: number,
   ): Promise<Product[]> {
-    if (page === undefined) {
-      page = 0;
+    if (isNaN(page) || page === 0) {
+      page = 1;
     }
     let whereQuery = '';
 
@@ -99,18 +99,18 @@ export class ProductsService {
         whereQuery += ` product.shop_id = ${shopId}`;
       }
       if (categoryId) {
-        whereQuery += ` AND product.category_id = ${categoryId}`;
+        whereQuery += ` product.category_id = ${categoryId}`;
       }
     }
 
     if (sortBy === 'date') {
       sortBy = 'created_at';
     }
-    sortBy == undefined
+    sortBy == undefined || sortBy == 'random'
       ? (sortBy = `random()`)
       : (sortBy = `product.${sortBy}`);
 
-    return await this.productRepository
+    const productsResult = await this.productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.shop', 'shop', 'shop.id = product.shop_id')
       .leftJoinAndSelect(
@@ -123,6 +123,12 @@ export class ProductsService {
       .orderBy(sortBy, sortType === 'asc' ? 'ASC' : 'DESC')
       .skip((page - 1) * 10)
       .getMany();
+
+    if (productsResult.length === 0) {
+      throw new NotFoundException('Products not found');
+    }
+
+    return productsResult;
   }
 
   async findOne(id: number): Promise<Product> {
@@ -187,5 +193,13 @@ export class ProductsService {
     if (updateProduct.affected === 0) {
       throw new NotFoundException('Product not found');
     }
+  }
+
+  async countProductsByShop(shopId: number): Promise<number> {
+    const shop = await this.shopsService.findOne(shopId);
+
+    return await this.productRepository.count({
+      where: { shop },
+    });
   }
 }

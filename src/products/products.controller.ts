@@ -58,9 +58,9 @@ export class ProductsController {
         query['search'],
         query['sortBy'],
         query['sortType'],
-        query['page'],
-        query['shop'],
-        query['category'],
+        +query['page'],
+        +query['shop'],
+        +query['category'],
       );
       return {
         message: 'Produk berhasil ditemukan',

@@ -70,15 +70,24 @@ export class ShopsService {
   }
 
   async findAll(search: string): Promise<Shop[]> {
+    let shops: Shop[];
     if (search) {
-      return await this.shopsRepository.find({
+      shops = await this.shopsRepository.find({
         where: {
           name: Like(`%${search}%`),
         },
       });
+    } else {
+      shops = await this.shopsRepository.find();
     }
 
-    return await this.shopsRepository.find();
+    for (const item of shops) {
+      item.total_products = await this.productsService.countProductsByShop(
+        item.id,
+      );
+    }
+
+    return shops;
   }
 
   async findOne(id: number): Promise<Shop> {

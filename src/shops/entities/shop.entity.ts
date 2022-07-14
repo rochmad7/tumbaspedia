@@ -60,4 +60,6 @@ export class Shop {
 
   @OneToMany((type) => Transaction, (transaction) => transaction.shop)
   transactions: Transaction[];
+
+  total_products: number;
 }
