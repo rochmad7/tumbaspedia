@@ -144,6 +144,7 @@ export class ShopsService {
     sortBy: string,
     sortType: string,
     page: number,
+    limit: number,
     shopId: number,
     categoryId: number,
   ): Promise<Product[]> {
@@ -152,6 +153,7 @@ export class ShopsService {
       sortBy,
       sortType,
       page,
+      limit,
       shopId,
       categoryId,
     );

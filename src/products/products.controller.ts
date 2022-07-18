@@ -59,6 +59,7 @@ export class ProductsController {
         query['sortBy'],
         query['sortType'],
         +query['page'],
+        +query['limit'],
         +query['shop'],
         +query['category'],
       );

@@ -39,6 +39,7 @@ export class ShopsController {
         query['sortBy'],
         query['sortType'],
         query['page'],
+        query['limit'],
         +req.user.shop.id,
         query['category'],
       );

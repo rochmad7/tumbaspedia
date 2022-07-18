@@ -72,11 +72,15 @@ export class ProductsService {
     sortBy: string,
     sortType: string,
     page: number,
+    limit: number,
     shopId: number,
     categoryId: number,
   ): Promise<Product[]> {
     if (isNaN(page) || page === 0) {
       page = 1;
+    }
+    if (isNaN(limit)) {
+      limit = 10;
     }
     let whereQuery = '';
 
@@ -122,6 +126,7 @@ export class ProductsService {
       .where(whereQuery)
       .orderBy(sortBy, sortType === 'asc' ? 'ASC' : 'DESC')
       .skip((page - 1) * 10)
+      .limit(limit)
       .getMany();
 
     if (productsResult.length === 0) {
