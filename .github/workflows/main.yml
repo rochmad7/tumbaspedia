@@ -1,0 +1,25 @@
+name: Deploy Site on Push
+on:
+  push:
+    branches:
+      - main
+jobs:
+  web-deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get the latest code
+      uses: actions/checkout@v3.0.2
+    - uses: actions/setup-node@master
+    - name: Installing project dependencies
+      run: npm install
+    - name: Building the project
+      run: npm run build
+    - name: Directory Permissions
+      run: chmod -R 777 storage bootstrap/cache
+    - name: 📂 Sync files
+      uses: SamKirkland/FTP-Deploy-Action@4.0.0
+      with:
+        server: ${{ secrets.DEV_SITE_SERVER}}
+        username: ${{ secrets.DEV_SITE_USER}}
+        password: ${{ secrets.DEV_SITE_PASS}}
