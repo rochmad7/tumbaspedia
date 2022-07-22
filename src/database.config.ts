@@ -10,12 +10,13 @@ export class DatabaseConfiguration implements TypeOrmOptionsFactory {
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
 
-      entities: [process.env.TYPEORM_ENTITIES],
-      logging: process.env.NODE_ENV === 'development',
+      entities: ['dist/src/**/entities/*.js'],
+      migrationsTableName: 'migration_table',
       synchronize: false,
-      migrations: [process.env.TYPEORM_MIGRATIONS],
+      migrations: ['dist/database/migrations/*.js'],
+      seeds: ['dist/database/seeds/*.js'],
       cli: {
-        migrationsDir: process.env.TYPEORM_MIGRATIONS_DIR,
+        migrationsDir: 'database/migrations',
       },
     };
   }
