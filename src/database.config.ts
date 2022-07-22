@@ -3,7 +3,7 @@ import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 export class DatabaseConfiguration implements TypeOrmOptionsFactory {
   createTypeOrmOptions(): TypeOrmModuleOptions | Promise<TypeOrmModuleOptions> {
     return {
-      type: 'postgres',
+      type: `postgres`,
       host: process.env.DB_HOST,
       port: parseInt(process.env.DB_PORT, 10) || 5432,
       username: process.env.DB_USERNAME,
@@ -14,7 +14,6 @@ export class DatabaseConfiguration implements TypeOrmOptionsFactory {
       migrationsTableName: 'migration_table',
       synchronize: false,
       migrations: ['dist/database/migrations/*.js'],
-      seeds: ['dist/database/seeds/*.js'],
       cli: {
         migrationsDir: 'database/migrations',
       },
