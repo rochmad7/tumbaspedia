@@ -1,4 +1,4 @@
-module.exports = {
+const ORMConfig = {
   type: `postgres`,
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
@@ -14,3 +14,5 @@ module.exports = {
     migrationsDir: 'database/migrations',
   },
 };
+
+module.exports = ORMConfig;
