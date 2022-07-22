@@ -13,10 +13,14 @@ import { ShopsModule } from './shops/shops.module';
 import { ProductsModule } from './products/products.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { ProductPicturesModule } from './product-pictures/product-pictures.module';
+import { DatabaseConfiguration } from "./database.config";
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({ timezone: 'Asia/Jakarta' }),
+    TypeOrmModule.forRootAsync({
+      useClass: DatabaseConfiguration,
+    }),
     MulterModule.register({
       storage: memoryStorage(), // use memory storage for having the buffer
     }),
