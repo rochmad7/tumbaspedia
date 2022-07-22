@@ -14,21 +14,26 @@ import { ProductsModule } from './products/products.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { ProductPicturesModule } from './product-pictures/product-pictures.module';
 import { DatabaseConfiguration } from './database.config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT, 10) || 5432,
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-
-      entities: ['dist/src/**/entities/*.js'],
-      migrationsTableName: 'migration_table',
-      synchronize: false,
-      migrations: ['dist/database/migrations/*.js'],
+    ConfigModule.forRoot(),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('DB_HOST'),
+        port: parseInt(configService.get<string>('DB_PORT')),
+        username: configService.get<string>('DB_USERNAME'),
+        password: configService.get<string>('DB_PASSWORD'),
+        database: configService.get<string>('DB_NAME'),
+        entities: ['dist/src/**/entities/*.js'],
+        migrationsTableName: 'migration_table',
+        synchronize: false,
+        migrations: ['dist/database/migrations/*.js'],
+      }),
     }),
     MulterModule.register({
       storage: memoryStorage(), // use memory storage for having the buffer
