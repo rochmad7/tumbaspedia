@@ -13,13 +13,22 @@ import { ShopsModule } from './shops/shops.module';
 import { ProductsModule } from './products/products.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { ProductPicturesModule } from './product-pictures/product-pictures.module';
-import { DatabaseConfiguration } from "./database.config";
+import { DatabaseConfiguration } from './database.config';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({ timezone: 'Asia/Jakarta' }),
-    TypeOrmModule.forRootAsync({
-      useClass: DatabaseConfiguration,
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT, 10) || 5432,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+
+      entities: ['dist/src/**/entities/*.js'],
+      migrationsTableName: 'migration_table',
+      synchronize: false,
+      migrations: ['dist/database/migrations/*.js'],
     }),
     MulterModule.register({
       storage: memoryStorage(), // use memory storage for having the buffer

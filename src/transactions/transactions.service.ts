@@ -76,8 +76,9 @@ export class TransactionsService {
   }
 
   async findOne(id: number, userId: number): Promise<Transaction> {
-    return await this.transactionRepository.findOne(id, {
+    return await this.transactionRepository.findOne({
       where: {
+        id,
         user: {
           id: userId,
         },
