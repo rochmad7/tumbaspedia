@@ -13,7 +13,6 @@ import { ShopsModule } from './shops/shops.module';
 import { ProductsModule } from './products/products.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { ProductPicturesModule } from './product-pictures/product-pictures.module';
-import { DatabaseConfiguration } from './database.config';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
