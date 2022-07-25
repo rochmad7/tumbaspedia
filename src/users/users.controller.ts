@@ -27,6 +27,28 @@ import { ErrorResponse, SuccessResponse } from '../app.service';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Post(':id/upload')
+  @Roles(ConstRole.ADMIN, ConstRole.SELLER, ConstRole.BUYER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseInterceptors(FileInterceptor('profile_picture'))
+  async upload(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      await this.usersService.uploadImageToCloudinary(+id, file);
+      return {
+        message: 'Berhasil mengubah foto profil',
+        data: null,
+      };
+    } catch (error) {
+      return {
+        message: 'Gagal mengubah foto profil',
+        errors: error,
+      };
+    }
+  }
+
   @Post()
   async create(
     @Body() createUserDto: CreateUserDto,
@@ -146,28 +168,6 @@ export class UsersController {
     } catch (error) {
       return {
         message: 'Gagal menghapus user',
-        errors: error,
-      };
-    }
-  }
-
-  @Post(':id/upload')
-  @Roles(ConstRole.ADMIN, ConstRole.SELLER, ConstRole.BUYER)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @UseInterceptors(FileInterceptor('profile_picture'))
-  async upload(
-    @Param('id') id: string,
-    @UploadedFile() file: Express.Multer.File,
-  ): Promise<SuccessResponse | ErrorResponse> {
-    try {
-      await this.usersService.uploadImageToCloudinary(+id, file);
-      return {
-        message: 'Berhasil mengubah foto profil',
-        data: null,
-      };
-    } catch (error) {
-      return {
-        message: 'Gagal mengubah foto profil',
         errors: error,
       };
     }

@@ -31,6 +31,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         entities: ['dist/src/**/entities/*.js'],
         migrationsTableName: 'migration_table',
         synchronize: false,
+        logging: true,
         migrations: ['dist/database/migrations/*.js'],
       }),
     }),

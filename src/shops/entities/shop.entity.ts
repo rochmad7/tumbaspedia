@@ -37,6 +37,9 @@ export class Shop {
   is_verified: boolean;
 
   @Column()
+  nib: string;
+
+  @Column()
   opened_at: string;
 
   @Column()

@@ -11,6 +11,7 @@ import { User } from '../users/entities/user.entity';
 import { JwtAuthGuard } from './jwt/jwt-auth.guard';
 import { RolesGuard } from './roles/roles.guard';
 import { ShopsModule } from '../shops/shops.module';
+import { RolesModule } from '../roles/roles.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ShopsModule } from '../shops/shops.module';
     TypeOrmModule.forFeature([User]),
     UsersModule,
     ShopsModule,
+    RolesModule,
   ],
   providers: [AuthService, JwtStrategy, JwtAuthGuard, RolesGuard],
   controllers: [AuthController],

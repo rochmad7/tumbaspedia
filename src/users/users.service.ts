@@ -27,13 +27,15 @@ export class UsersService {
     private readonly rolesService: RolesService,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<void> {
+  async create(createUserDto: CreateUserDto, role?: Role): Promise<void> {
     const { password } = createUserDto;
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const role = await this.rolesService.findOne(ConstRole.BUYER);
+    if (role === undefined) {
+      role = await this.rolesService.findOne(ConstRole.BUYER);
+    }
 
     const user = this.userRepository.create({
       ...createUserDto,
@@ -68,6 +70,15 @@ export class UsersService {
 
   async findOneByEmail(email: string): Promise<User> {
     const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new NotFoundException('User does not exist!');
+    }
+
+    return user;
+  }
+
+  async findOneByEmailAndRole(email: string, role: Role): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { email, role } });
     if (!user) {
       throw new NotFoundException('User does not exist!');
     }
@@ -119,5 +130,23 @@ export class UsersService {
     return await this.userRepository.update(id, {
       password: hashedPassword,
     });
+  }
+
+  async checkUser(createUserDto: CreateUserDto): Promise<User> {
+    const { password } = createUserDto;
+
+    const user = await this.userRepository.findOne({
+      where: { email: createUserDto.email },
+    });
+    if (!user) {
+      throw new NotFoundException('User does not exist!');
+    }
+
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
+      throw new NotFoundException('Password is incorrect!');
+    }
+
+    return user;
   }
 }

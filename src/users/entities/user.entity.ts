@@ -8,6 +8,7 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 import { Role } from '../../roles/entities/role.entity';
@@ -24,6 +25,7 @@ export class User {
   name: string;
 
   @Column()
+  @Unique('multiple_roles', ['email', 'role_id'])
   email: string;
 
   @Column()

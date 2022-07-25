@@ -9,6 +9,7 @@ import {
   Query,
   Req,
   UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -18,7 +19,10 @@ import { UpdateShopDto } from './dto/update-shop.dto';
 import { Roles } from '../auth/roles/roles.decorator';
 import { JwtAuthGuard } from '../auth/jwt/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles/roles.guard';
-import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  FileFieldsInterceptor,
+  FileInterceptor,
+} from '@nestjs/platform-express';
 import { ConstRole } from '../constants';
 import { ErrorResponse, SuccessResponse } from '../app.service';
 
@@ -78,17 +82,26 @@ export class ShopsController {
   @Post()
   @Roles(ConstRole.ADMIN, ConstRole.SELLER, ConstRole.BUYER)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @UseInterceptors(FileInterceptor('shop_picture'))
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'shop_picture', maxCount: 1 },
+      { name: 'shop_nib', maxCount: 1 },
+    ]),
+  )
   async create(
     @Body() createShopDto: CreateShopDto,
     @Req() req,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFiles()
+    files: {
+      shop_picture: Express.Multer.File[];
+      shop_nib: Express.Multer.File[];
+    },
   ): Promise<SuccessResponse | ErrorResponse> {
     try {
       const shop = await this.shopsService.create(
         req.user.id,
         createShopDto,
-        file,
+        files,
       );
       return {
         message: 'Toko berhasil dibuat',
@@ -138,15 +151,24 @@ export class ShopsController {
 
   @Roles(ConstRole.ADMIN, ConstRole.SELLER, ConstRole.BUYER)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @UseInterceptors(FileInterceptor('shop_picture'))
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'shop_picture', maxCount: 1 },
+      { name: 'shop_nib', maxCount: 1 },
+    ]),
+  )
   @Patch(':id')
   async update(
     @Param('id') id: string,
     @Body() updateShopDto: UpdateShopDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFiles()
+    files: {
+      shop_picture?: Express.Multer.File[];
+      shop_nib?: Express.Multer.File[];
+    },
   ): Promise<SuccessResponse | ErrorResponse> {
     try {
-      await this.shopsService.update(+id, updateShopDto, file);
+      await this.shopsService.update(+id, updateShopDto, files);
       return {
         message: 'Berhasil mengubah toko',
         data: null,

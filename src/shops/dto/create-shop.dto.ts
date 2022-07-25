@@ -12,6 +12,8 @@ export class CreateShopDto {
 
   shop_picture: string;
 
+  nib: string;
+
   is_open: boolean;
 
   is_verified: boolean;

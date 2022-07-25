@@ -1,0 +1,22 @@
+{
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5432,
+  "username": "postgres",
+  "password": "rochmad1",
+  "database": "skripsi-marketplace",
+  "logging": true,
+  "entities": [
+    "dist/src/**/entities/*.js"
+  ],
+  "migrationsTableName": "migration_table",
+  "migrations": [
+    "dist/database/migrations/*.js"
+  ],
+  "seeds": [
+    "dist/database/seeds/*.js"
+  ],
+  "cli": {
+    "migrationsDir": "database/migrations"
+  }
+}
