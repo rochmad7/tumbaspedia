@@ -23,7 +23,6 @@ import { ProductsService } from '../products/products.service';
 import { Product } from '../products/entities/product.entity';
 import { TransactionsService } from '../transactions/transactions.service';
 import { Transaction } from '../transactions/entities/transaction.entity';
-import { UploadApiErrorResponse, UploadApiResponse } from 'cloudinary';
 
 @Injectable()
 export class ShopsService {
@@ -42,10 +41,10 @@ export class ShopsService {
   async create(
     userId: number,
     createShopDto: CreateShopDto,
-    files: {
-      shop_picture?: Express.Multer.File[];
-      shop_nib?: Express.Multer.File[];
-    },
+    // files: {
+    //   shop_picture?: Express.Multer.File[];
+    //   shop_nib?: Express.Multer.File[];
+    // },
   ): Promise<Shop> {
     const user = await this.usersService.findOneById(userId);
     if (!user) {
@@ -72,7 +71,6 @@ export class ShopsService {
     //   );
     //   createShopDto.nib = uploadShopNib.secure_url;
     // }
-
 
     try {
       // if (user.role.id == ConstRole.BUYER) {

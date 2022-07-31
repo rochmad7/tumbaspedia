@@ -8,7 +8,6 @@ import {
   Post,
   Query,
   Req,
-  UploadedFile,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
@@ -19,10 +18,7 @@ import { UpdateShopDto } from './dto/update-shop.dto';
 import { Roles } from '../auth/roles/roles.decorator';
 import { JwtAuthGuard } from '../auth/jwt/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles/roles.guard';
-import {
-  FileFieldsInterceptor,
-  FileInterceptor,
-} from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ConstRole } from '../constants';
 import { ErrorResponse, SuccessResponse } from '../app.service';
 
@@ -91,18 +87,9 @@ export class ShopsController {
   async create(
     @Body() createShopDto: CreateShopDto,
     @Req() req,
-    @UploadedFiles()
-    files: {
-      shop_picture: Express.Multer.File[];
-      shop_nib: Express.Multer.File[];
-    },
   ): Promise<SuccessResponse | ErrorResponse> {
     try {
-      const shop = await this.shopsService.create(
-        req.user.id,
-        createShopDto,
-        files,
-      );
+      const shop = await this.shopsService.create(req.user.id, createShopDto);
       return {
         message: 'Toko berhasil dibuat',
         data: shop,
@@ -115,6 +102,8 @@ export class ShopsController {
     }
   }
 
+  // @Roles(ConstRole.ADMIN)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
   async findAll(@Query() query): Promise<SuccessResponse | ErrorResponse> {
     try {

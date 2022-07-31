@@ -44,12 +44,29 @@ export class AuthController {
   }
 
   @Post('login')
-  @HttpCode(HttpStatus.OK)
   async login(
     @Body() authCredentialsDto: AuthCredentialsDto,
   ): Promise<SuccessResponse | ErrorResponse> {
     try {
       const login = await this.authService.login(authCredentialsDto);
+      return {
+        message: 'Login berhasil',
+        data: login,
+      };
+    } catch (error) {
+      return {
+        message: 'Terjadi kesalahan saat login',
+        errors: error,
+      };
+    }
+  }
+
+  @Post('admin/login')
+  async loginAdmin(
+    @Body() authCredentialsDto: AuthCredentialsDto,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const login = await this.authService.loginAdmin(authCredentialsDto);
       return {
         message: 'Login berhasil',
         data: login,
@@ -109,7 +126,7 @@ export class AuthController {
       const registration = await this.authService.registerShop(
         registerUserDto,
         registerShopDto,
-        files,
+        // files,
       );
       return {
         message: 'Shop berhasil terdaftar',
