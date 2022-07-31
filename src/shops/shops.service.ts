@@ -141,7 +141,7 @@ export class ShopsService {
   async update(
     id: number,
     updateShopDto: UpdateShopDto,
-    files: {
+    files?: {
       shop_picture?: Express.Multer.File[];
       shop_nib?: Express.Multer.File[];
     },
@@ -211,5 +211,22 @@ export class ShopsService {
     }
 
     return transactionShop;
+  }
+
+  async verifyShop(id: number): Promise<Shop> {
+    const shop = await this.shopsRepository.findOne({ where: { id } });
+    if (!shop) {
+      throw new NotFoundException(`Shop not found`);
+    }
+
+    const updateShop = await this.shopsRepository.update(id, {
+      is_verified: true,
+    });
+    if (updateShop.affected === 0) {
+      throw new NotFoundException(`Shop not found`);
+    }
+
+    shop.is_verified = true;
+    return shop;
   }
 }

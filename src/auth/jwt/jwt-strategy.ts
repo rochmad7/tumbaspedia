@@ -30,7 +30,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     const shop = await this.shopsService.findOneByUserID(user.id);
     if (!shop) {
-      throw new UnauthorizedException();
+      return findUser;
     }
     findUser.shop = shop;
 

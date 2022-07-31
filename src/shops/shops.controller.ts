@@ -102,8 +102,8 @@ export class ShopsController {
     }
   }
 
-  // @Roles(ConstRole.ADMIN)
-  // @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(ConstRole.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
   async findAll(@Query() query): Promise<SuccessResponse | ErrorResponse> {
     try {
@@ -138,7 +138,27 @@ export class ShopsController {
     }
   }
 
-  @Roles(ConstRole.ADMIN, ConstRole.SELLER, ConstRole.BUYER)
+  @Roles(ConstRole.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Patch('verify/:id')
+  async verify(
+    @Param('id') id: string,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const shop = await this.shopsService.verifyShop(+id);
+      return {
+        message: 'Berhasil mengaktifkan toko',
+        data: shop,
+      };
+    } catch (error) {
+      return {
+        message: 'Gagal mengaktifkan toko',
+        errors: error,
+      };
+    }
+  }
+
+  @Roles(ConstRole.ADMIN, ConstRole.SELLER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @UseInterceptors(
     FileFieldsInterceptor([
