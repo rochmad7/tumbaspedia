@@ -58,9 +58,17 @@ export class TransactionsService {
     return await this.transactionRepository.save(transaction);
   }
 
-  async findAll(): Promise<Transaction[]> {
+  async findAll(search: number, status: string): Promise<Transaction[]> {
     return await this.transactionRepository.find({
       relations: ['shop', 'user', 'product'],
+      where: {
+        ...(search && {
+          id: search,
+        }),
+        ...(status && {
+          status,
+        }),
+      },
     });
   }
 
@@ -149,5 +157,95 @@ export class TransactionsService {
       skip,
       take,
     });
+  }
+
+  async countAllTransactionsPerMonth(date: Date): Promise<number> {
+    const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+    return await this.transactionRepository
+      .createQueryBuilder('transaction')
+      .where('created_at >= :after', {
+        after: firstDayOfMonth,
+      })
+      .andWhere('created_at < :before', {
+        before: lastDayOfMonth,
+      })
+      .getCount();
+  }
+
+  async countAllTransactionsPerWeek(date: Date): Promise<number> {
+    const lastDayOfWeek = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate() + 1,
+    );
+    const firstDayOfWeek = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate() - 6,
+    );
+    return await this.transactionRepository
+      .createQueryBuilder('transaction')
+      .where('created_at >= :after', {
+        after: firstDayOfWeek,
+      })
+      .andWhere('created_at < :before', {
+        before: lastDayOfWeek,
+      })
+      .getCount();
+  }
+
+  async totalAllTransactionsPerMonth(date: Date): Promise<number> {
+    let total = 0;
+
+    const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+    const monthSum = await this.transactionRepository
+      .createQueryBuilder('transaction')
+      .select('SUM(transaction.total)', 'total')
+      .where('created_at >= :after', {
+        after: firstDayOfMonth,
+      })
+      .andWhere('created_at < :before', {
+        before: lastDayOfMonth,
+      })
+      .getRawMany();
+
+    monthSum.forEach((element) => {
+      total += +element.total;
+    });
+
+    return total;
+  }
+
+  async totalAllTransactionsPerWeek(date: Date): Promise<number> {
+    let total = 0;
+
+    const lastDayOfWeek = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate() + 1,
+    );
+    const firstDayOfWeek = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate() - 6,
+    );
+    const weekSum = await this.transactionRepository
+      .createQueryBuilder('transaction')
+      .select('SUM(transaction.total)', 'total')
+      .where('created_at >= :after', {
+        after: firstDayOfWeek,
+      })
+      .andWhere('created_at < :before', {
+        before: lastDayOfWeek,
+      })
+      .getRawMany();
+
+    weekSum.forEach((element) => {
+      total += +element.total;
+    });
+
+    return total;
   }
 }

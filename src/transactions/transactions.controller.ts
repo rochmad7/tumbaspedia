@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Query,
   Patch,
   Post,
   Req,
@@ -49,10 +50,17 @@ export class TransactionsController {
   @Get()
   @Roles(ConstRole.BUYER, ConstRole.SELLER, ConstRole.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async findAll(@Req() req): Promise<SuccessResponse | ErrorResponse> {
+  async findAll(
+    @Req() req,
+    @Query('search') search,
+    @Query('status') status,
+  ): Promise<SuccessResponse | ErrorResponse> {
     try {
-      if (req.user.role_id === ConstRole.ADMIN) {
-        const transactions = await this.transactionsService.findAll();
+      if (req.user.role.id === ConstRole.ADMIN) {
+        const transactions = await this.transactionsService.findAll(
+          +search,
+          status,
+        );
 
         return {
           message: 'Transaksi berhasil ditemukan',

@@ -149,4 +149,19 @@ export class UsersService {
 
     return user;
   }
+
+  async countUsers(): Promise<{ shops_count; buyers_count }> {
+    const sellerRole = await this.rolesService.findOne(ConstRole.SELLER);
+    const buyerRole = await this.rolesService.findOne(ConstRole.BUYER);
+
+    const shopCount = await this.userRepository.count({
+      where: { role: sellerRole },
+    });
+
+    const buyerCount = await this.userRepository.count({
+      where: { role: buyerRole },
+    });
+
+    return { shops_count: shopCount, buyers_count: buyerCount };
+  }
 }

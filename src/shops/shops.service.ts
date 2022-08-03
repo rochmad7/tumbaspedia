@@ -213,14 +213,14 @@ export class ShopsService {
     return transactionShop;
   }
 
-  async verifyShop(id: number): Promise<Shop> {
+  async verifyShop(id: number, isVerified: boolean): Promise<Shop> {
     const shop = await this.shopsRepository.findOne({ where: { id } });
     if (!shop) {
       throw new NotFoundException(`Shop not found`);
     }
 
     const updateShop = await this.shopsRepository.update(id, {
-      is_verified: true,
+      is_verified: isVerified,
     });
     if (updateShop.affected === 0) {
       throw new NotFoundException(`Shop not found`);

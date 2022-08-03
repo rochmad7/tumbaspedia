@@ -102,8 +102,6 @@ export class ShopsController {
     }
   }
 
-  @Roles(ConstRole.ADMIN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
   async findAll(@Query() query): Promise<SuccessResponse | ErrorResponse> {
     try {
@@ -143,9 +141,10 @@ export class ShopsController {
   @Patch('verify/:id')
   async verify(
     @Param('id') id: string,
+    @Body('is_verified') isVerified: boolean
   ): Promise<SuccessResponse | ErrorResponse> {
     try {
-      const shop = await this.shopsService.verifyShop(+id);
+      const shop = await this.shopsService.verifyShop(+id, isVerified);
       return {
         message: 'Berhasil mengaktifkan toko',
         data: shop,

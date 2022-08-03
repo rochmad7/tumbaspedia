@@ -14,6 +14,7 @@ import { ProductsModule } from './products/products.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { ProductPicturesModule } from './product-pictures/product-pictures.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AdministratorsModule } from './administrators/administrators.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     ProductsModule,
     TransactionsModule,
     ProductPicturesModule,
+    AdministratorsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
