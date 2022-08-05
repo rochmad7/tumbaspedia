@@ -17,6 +17,7 @@ import {
   DEFAULT_PROFILE_PICTURE,
 } from '../constants';
 import { RolesService } from '../roles/roles.service';
+import { MailService } from "../mail/mail.service";
 
 @Injectable()
 export class UsersService {
@@ -25,6 +26,7 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
     private cloudinaryService: CloudinaryService,
     private readonly rolesService: RolesService,
+    private readonly mailService: MailService,
   ) {}
 
   async create(createUserDto: CreateUserDto, role?: Role): Promise<void> {
@@ -45,6 +47,7 @@ export class UsersService {
     });
     try {
       await this.userRepository.save(user);
+      await this.mailService.sendUserConfirmation(user);
     } catch (error) {
       // duplicate by postgres
       if (error.code === '23505') {

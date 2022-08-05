@@ -15,10 +15,11 @@ import { TransactionsModule } from './transactions/transactions.module';
 import { ProductPicturesModule } from './product-pictures/product-pictures.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AdministratorsModule } from './administrators/administrators.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -49,6 +50,7 @@ import { AdministratorsModule } from './administrators/administrators.module';
     TransactionsModule,
     ProductPicturesModule,
     AdministratorsModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -10,6 +10,7 @@ import { UsersModule } from '../users/users.module';
 import { RolesModule } from '../roles/roles.module';
 import { ProductsModule } from '../products/products.module';
 import { TransactionsModule } from "../transactions/transactions.module";
+import { MailModule } from "../mail/mail.module";
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { TransactionsModule } from "../transactions/transactions.module";
     forwardRef(() => ProductsModule),
     forwardRef(() => TransactionsModule),
     RolesModule,
+    MailModule,
   ],
   controllers: [ShopsController],
   providers: [ShopsService],

@@ -7,6 +7,7 @@ import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { RolesModule } from '../roles/roles.module';
+import { MailModule } from "../mail/mail.module";
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { RolesModule } from '../roles/roles.module';
     }),
     CloudinaryModule,
     RolesModule,
+    MailModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],

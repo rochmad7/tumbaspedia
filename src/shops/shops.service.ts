@@ -23,6 +23,7 @@ import { ProductsService } from '../products/products.service';
 import { Product } from '../products/entities/product.entity';
 import { TransactionsService } from '../transactions/transactions.service';
 import { Transaction } from '../transactions/entities/transaction.entity';
+import { MailService } from "../mail/mail.service";
 
 @Injectable()
 export class ShopsService {
@@ -36,54 +37,22 @@ export class ShopsService {
     private readonly productsService: ProductsService,
     @Inject(forwardRef(() => TransactionsService))
     private readonly transactionsService: TransactionsService,
+    private readonly mailService: MailService,
   ) {}
 
   async create(
     userId: number,
     createShopDto: CreateShopDto,
-    // files: {
-    //   shop_picture?: Express.Multer.File[];
-    //   shop_nib?: Express.Multer.File[];
-    // },
   ): Promise<Shop> {
     const user = await this.usersService.findOneById(userId);
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    // if (files.shop_picture) {
-    //   console.log('I am here from flutter 2');
-    //   const uploadShopPict = await this.cloudinaryService.uploadImage(
-    //     files.shop_picture[0],
-    //     CLOUDINARY_FOLDER_SHOP,
-    //   );
-    //   createShopDto.shop_picture = uploadShopPict.secure_url;
-    // } else {
-    //   console.log('I am here from flutter 3');
-    //   createShopDto.shop_picture = DEFAULT_SHOP_PICTURE;
-    //   console.log('default shop picture');
-    // }
-    //
-    // if (files.shop_nib) {
-    //   const uploadShopNib = await this.cloudinaryService.uploadImage(
-    //     files.shop_nib[0],
-    //     CLOUDINARY_FOLDER_SHOP_NIB,
-    //   );
-    //   createShopDto.nib = uploadShopNib.secure_url;
-    // }
-
     try {
-      // if (user.role.id == ConstRole.BUYER) {
-      //   const role = await this.rolesService.findOne(ConstRole.SELLER);
-      //
-      //   await this.usersService.changeRole(userId, role);
-      // }
-
       const shop = this.shopsRepository.create({
         ...createShopDto,
         shop_picture: DEFAULT_SHOP_PICTURE,
-        // shop_picture: uploadShopPict.url,
-        // nib: uploadShopNib.url,
         is_open: true,
         is_verified: false,
         user: user,
@@ -91,8 +60,6 @@ export class ShopsService {
 
       return await this.shopsRepository.save(shop);
     } catch (err) {
-      // await this.cloudinaryService.deleteImage(uploadShopPict.public_id);
-      // await this.cloudinaryService.deleteImage(uploadShopNib.public_id);
       throw new Error(err);
     }
   }
