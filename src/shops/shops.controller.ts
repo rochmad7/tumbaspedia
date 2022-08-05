@@ -105,7 +105,10 @@ export class ShopsController {
   @Get()
   async findAll(@Query() query): Promise<SuccessResponse | ErrorResponse> {
     try {
-      const shops = await this.shopsService.findAll(query['search']);
+      const shops = await this.shopsService.findAll(
+        query['search'],
+        query['sort_by'],
+      );
       return {
         message: 'Berhasil mengambil semua toko',
         data: shops,
@@ -141,7 +144,7 @@ export class ShopsController {
   @Patch('verify/:id')
   async verify(
     @Param('id') id: string,
-    @Body('is_verified') isVerified: boolean
+    @Body('is_verified') isVerified: boolean,
   ): Promise<SuccessResponse | ErrorResponse> {
     try {
       const shop = await this.shopsService.verifyShop(+id, isVerified);

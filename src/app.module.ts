@@ -32,7 +32,7 @@ import { AdministratorsModule } from './administrators/administrators.module';
         entities: ['dist/src/**/entities/*.js'],
         migrationsTableName: 'migration_table',
         synchronize: false,
-        logging: true,
+        logging: false,
         migrations: ['dist/database/migrations/*.js'],
       }),
     }),
