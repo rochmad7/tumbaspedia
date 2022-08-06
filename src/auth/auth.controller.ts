@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   UploadedFile,
   UploadedFiles,
@@ -38,6 +40,24 @@ export class AuthController {
     } catch (error) {
       return {
         message: 'Terjadi kesalahan saat pendaftaran',
+        errors: error,
+      };
+    }
+  }
+
+  @Get('/confirm/:token')
+  async confirmUser(
+    @Param('token') token: string,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const confirm = await this.authService.confirmUser(token);
+      return {
+        message: 'Berhasil konfirmasi akun',
+        data: confirm,
+      };
+    } catch (error) {
+      return {
+        message: 'Gagal konfirmasi akun',
         errors: error,
       };
     }

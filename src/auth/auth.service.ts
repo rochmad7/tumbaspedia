@@ -16,6 +16,7 @@ import { User } from '../users/entities/user.entity';
 import { Shop } from '../shops/entities/shop.entity';
 import { RegisterShopDto } from './dto/register-shop.dto';
 import { RolesService } from '../roles/roles.service';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -24,10 +25,17 @@ export class AuthService {
     private jwtService: JwtService,
     private readonly shopsService: ShopsService,
     private readonly rolesService: RolesService,
+    private readonly mailService: MailService,
   ) {}
 
   async register(registerUserDto: RegisterUserDto): Promise<void> {
-    return this.usersService.create(registerUserDto);
+    const user = await this.usersService.create(registerUserDto);
+
+    const token = this.jwtService.sign({
+      email: user.email,
+    });
+
+    await this.mailService.sendUserConfirmation(user.name, user.email, token);
   }
 
   async registerShop(
@@ -123,5 +131,20 @@ export class AuthService {
     } else {
       throw new UnauthorizedException('Invalid credentials');
     }
+  }
+
+  async confirmUser(token: string): Promise<User> {
+    const verifyToken = this.jwtService.verify(token);
+    // console.log(verifyToken.email);
+    const user = await this.usersService.findOneByEmailNotVerified(
+      verifyToken.email,
+    );
+    if (!user.is_verified) {
+      await this.usersService.update(user.id, {
+        is_verified: true,
+      });
+      user.is_verified = true;
+    }
+    return user;
   }
 }

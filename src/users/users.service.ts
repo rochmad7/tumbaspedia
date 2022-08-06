@@ -17,7 +17,7 @@ import {
   DEFAULT_PROFILE_PICTURE,
 } from '../constants';
 import { RolesService } from '../roles/roles.service';
-import { MailService } from "../mail/mail.service";
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class UsersService {
@@ -29,7 +29,7 @@ export class UsersService {
     private readonly mailService: MailService,
   ) {}
 
-  async create(createUserDto: CreateUserDto, role?: Role): Promise<void> {
+  async create(createUserDto: CreateUserDto, role?: Role): Promise<User> {
     const { password } = createUserDto;
 
     const salt = await bcrypt.genSalt(10);
@@ -47,11 +47,12 @@ export class UsersService {
     });
     try {
       await this.userRepository.save(user);
-      await this.mailService.sendUserConfirmation(user);
+
+      return user;
     } catch (error) {
       // duplicate by postgres
       if (error.code === '23505') {
-        throw new ConflictException('Email already exists');
+        throw new ConflictException('Email sudah terdaftar');
       } else {
         throw new Error(error);
       }
@@ -59,11 +60,13 @@ export class UsersService {
   }
 
   async findAll(): Promise<User[]> {
-    return await this.userRepository.find();
+    return await this.userRepository.find({ where: { is_verified: true } });
   }
 
   async findOneById(id: number): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id } });
+    const user = await this.userRepository.findOne({
+      where: { id, is_verified: true },
+    });
     if (!user) {
       throw new NotFoundException('User does not exist!');
     }
@@ -72,7 +75,20 @@ export class UsersService {
   }
 
   async findOneByEmail(email: string): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { email } });
+    const user = await this.userRepository.findOne({
+      where: { email, is_verified: true },
+    });
+    if (!user) {
+      throw new NotFoundException('User does not exist!');
+    }
+
+    return user;
+  }
+
+  async findOneByEmailNotVerified(email: string): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { email },
+    });
     if (!user) {
       throw new NotFoundException('User does not exist!');
     }
@@ -81,7 +97,9 @@ export class UsersService {
   }
 
   async findOneByEmailAndRole(email: string, role: Role): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { email, role } });
+    const user = await this.userRepository.findOne({
+      where: { email, role, is_verified: true },
+    });
     if (!user) {
       throw new NotFoundException('User does not exist!');
     }
