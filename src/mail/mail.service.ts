@@ -21,4 +21,35 @@ export class MailService {
       },
     });
   }
+
+  async sendShopConfirmation(shopName, email, token: string) {
+    const url = `${process.env.APP_URL}/auth/shop/confirm/${token}`;
+
+    await this.mailerService.sendMail({
+      to: email,
+      // from: '"Support Team" <support@example.com>', // override default from
+      subject: 'Selamat Datang di Tumbaspedia Seller!',
+      template: './confirmation', // `.hbs` extension is appended automatically
+      context: {
+        // ✏️ filling curly brackets with content
+        name: shopName,
+        url,
+      },
+    });
+  }
+
+  async sendPasswordReset(email, token: string) {
+    const url = `${process.env.APP_URL}/reset-password/${token}`;
+
+    await this.mailerService.sendMail({
+      to: email,
+      // from: '"Support Team" <
+      subject: 'Reset Password',
+      template: './reset-password', // `.hbs` extension is appended automatically
+      context: {
+        // ✏️ filling curly brackets with content
+        url,
+      },
+    });
+  }
 }

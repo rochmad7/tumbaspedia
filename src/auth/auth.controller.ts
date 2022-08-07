@@ -45,6 +45,24 @@ export class AuthController {
     }
   }
 
+  @Get('/shop/confirm/:token')
+  async confirmShop(
+    @Param('token') token: string,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const confirm = await this.authService.confirmShop(token);
+      return {
+        message: 'Berhasil konfirmasi akun',
+        data: confirm,
+      };
+    } catch (error) {
+      return {
+        message: 'Gagal konfirmasi akun',
+        errors: error,
+      };
+    }
+  }
+
   @Get('/confirm/:token')
   async confirmUser(
     @Param('token') token: string,
@@ -54,6 +72,48 @@ export class AuthController {
       return {
         message: 'Berhasil konfirmasi akun',
         data: confirm,
+      };
+    } catch (error) {
+      return {
+        message: 'Gagal konfirmasi akun',
+        errors: error,
+      };
+    }
+  }
+
+  @Post('send-reset-password')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async sendResetPasswordEmail(
+    @Body('email') email: string,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const sendResetPasswordEmail =
+        await this.authService.sendResetPasswordEmail(email);
+      return {
+        message: 'Email berhasil dikirim',
+        data: sendResetPasswordEmail,
+      };
+    } catch (error) {
+      return {
+        message: 'Terjadi kesalahan saat mengirim email',
+        errors: error,
+      };
+    }
+  }
+
+  @Post('reset-password/:token')
+  async resetPassword(
+    @Param('token') token: string,
+    @Body() authCredentialsDto: AuthCredentialsDto,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const resetPassword = await this.authService.resetPassword(
+        token,
+        authCredentialsDto.password,
+      );
+      return {
+        message: 'Berhasil konfirmasi akun',
+        data: resetPassword,
       };
     } catch (error) {
       return {

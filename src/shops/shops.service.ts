@@ -44,7 +44,7 @@ export class ShopsService {
     userId: number,
     createShopDto: CreateShopDto,
   ): Promise<Shop> {
-    const user = await this.usersService.findOneById(userId);
+    const user = await this.usersService.findOneByIdNotVerified(userId);
     if (!user) {
       throw new NotFoundException('User not found');
     }

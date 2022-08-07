@@ -57,6 +57,16 @@ export class AuthService {
 
     const shop = await this.shopsService.create(user.id, registerShopDto);
 
+    const token = this.jwtService.sign({
+      id: user.id,
+    });
+
+    await this.mailService.sendShopConfirmation(
+      shop.name,
+      shop.user.email,
+      token,
+    );
+
     const payload: ShopJwtPayload = {
       user: {
         id: user.id,
@@ -144,6 +154,54 @@ export class AuthService {
         is_verified: true,
       });
       user.is_verified = true;
+    }
+    return user;
+  }
+
+  async confirmShop(token: string): Promise<Shop> {
+    const verifyToken = this.jwtService.verify(token);
+    // console.log(verifyToken.email);
+    const user = await this.usersService.findOneByEmailNotVerified(
+      verifyToken.email,
+    );
+    if (!user.is_verified) {
+      await this.usersService.update(user.id, {
+        is_verified: true,
+      });
+      user.is_verified = true;
+    }
+
+    const shop = await this.shopsService.findOneByUserID(user.id);
+    if (!shop.is_verified) {
+      await this.shopsService.update(shop.id, {
+        is_verified: true,
+      });
+      shop.is_verified = true;
+    }
+
+    return shop;
+  }
+
+  async sendResetPasswordEmail(email: string): Promise<void> {
+    const user = await this.usersService.findOneByEmail(email);
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+    const token = this.jwtService.sign({
+      email: user.email,
+    });
+    await this.mailService.sendPasswordReset(user.email, token);
+  }
+
+  async resetPassword(token: string, password: string): Promise<User> {
+    const verifyToken = this.jwtService.verify(token);
+    const user = await this.usersService.findOneByEmailNotVerified(
+      verifyToken.email,
+    );
+    if (user) {
+      await this.usersService.update(user.id, {
+        password: await bcrypt.hash(password, 10),
+      });
     }
     return user;
   }

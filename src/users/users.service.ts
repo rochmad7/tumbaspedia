@@ -74,6 +74,17 @@ export class UsersService {
     return user;
   }
 
+  async findOneByIdNotVerified(id: number): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { id },
+    });
+    if (!user) {
+      throw new NotFoundException('User does not exist!');
+    }
+
+    return user;
+  }
+
   async findOneByEmail(email: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { email, is_verified: true },
@@ -98,11 +109,8 @@ export class UsersService {
 
   async findOneByEmailAndRole(email: string, role: Role): Promise<User> {
     const user = await this.userRepository.findOne({
-      where: { email, role, is_verified: true },
+      where: { email, role },
     });
-    if (!user) {
-      throw new NotFoundException('User does not exist!');
-    }
 
     return user;
   }
