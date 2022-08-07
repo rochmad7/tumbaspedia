@@ -160,10 +160,7 @@ export class AuthService {
 
   async confirmShop(token: string): Promise<Shop> {
     const verifyToken = this.jwtService.verify(token);
-    // console.log(verifyToken.email);
-    const user = await this.usersService.findOneByEmailNotVerified(
-      verifyToken.email,
-    );
+    const user = await this.usersService.findOneByIdNotVerified(verifyToken.id);
     if (!user.is_verified) {
       await this.usersService.update(user.id, {
         is_verified: true,

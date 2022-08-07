@@ -173,9 +173,39 @@ export class ShopsController {
     @Param('id') id: string,
     @Body() updateShopDto: UpdateShopDto,
     @UploadedFiles()
-    files: {
-      shop_picture?: Express.Multer.File[];
-      shop_nib?: Express.Multer.File[];
+    files?: {
+      shop_picture: Express.Multer.File[];
+      shop_nib: Express.Multer.File[];
+    },
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      await this.shopsService.update(+id, updateShopDto, files);
+      return {
+        message: 'Berhasil mengubah toko',
+        data: null,
+      };
+    } catch (error) {
+      return {
+        message: 'Gagal mengubah toko',
+        errors: error,
+      };
+    }
+  }
+
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'shop_picture', maxCount: 1 },
+      { name: 'shop_nib', maxCount: 1 },
+    ]),
+  )
+  @Patch('upload-image/:id')
+  async uploadImage(
+    @Param('id') id: string,
+    @Body() updateShopDto: UpdateShopDto,
+    @UploadedFiles()
+    files?: {
+      shop_picture: Express.Multer.File[];
+      shop_nib: Express.Multer.File[];
     },
   ): Promise<SuccessResponse | ErrorResponse> {
     try {

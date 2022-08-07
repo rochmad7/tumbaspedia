@@ -52,12 +52,12 @@ export class AuthController {
     try {
       const confirm = await this.authService.confirmShop(token);
       return {
-        message: 'Berhasil konfirmasi akun',
+        message: 'Berhasil konfirmasi akun seller',
         data: confirm,
       };
     } catch (error) {
       return {
-        message: 'Gagal konfirmasi akun',
+        message: 'Gagal konfirmasi akun seller',
         errors: error,
       };
     }

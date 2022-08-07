@@ -23,7 +23,7 @@ import { ProductsService } from '../products/products.service';
 import { Product } from '../products/entities/product.entity';
 import { TransactionsService } from '../transactions/transactions.service';
 import { Transaction } from '../transactions/entities/transaction.entity';
-import { MailService } from "../mail/mail.service";
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class ShopsService {
@@ -40,10 +40,7 @@ export class ShopsService {
     private readonly mailService: MailService,
   ) {}
 
-  async create(
-    userId: number,
-    createShopDto: CreateShopDto,
-  ): Promise<Shop> {
+  async create(userId: number, createShopDto: CreateShopDto): Promise<Shop> {
     const user = await this.usersService.findOneByIdNotVerified(userId);
     if (!user) {
       throw new NotFoundException('User not found');
@@ -116,26 +113,28 @@ export class ShopsService {
     id: number,
     updateShopDto: UpdateShopDto,
     files?: {
-      shop_picture?: Express.Multer.File[];
-      shop_nib?: Express.Multer.File[];
+      shop_picture: Express.Multer.File[];
+      shop_nib: Express.Multer.File[];
     },
   ): Promise<void> {
-    if (files.shop_picture !== undefined) {
-      const uploadShopPict = await this.cloudinaryService.uploadImage(
-        files.shop_picture[0],
-        CLOUDINARY_FOLDER_SHOP,
-      );
+    if (files !== undefined) {
+      if (files.shop_picture !== undefined) {
+        const uploadShopPict = await this.cloudinaryService.uploadImage(
+          files.shop_picture[0],
+          CLOUDINARY_FOLDER_SHOP,
+        );
 
-      updateShopDto.shop_picture = uploadShopPict.secure_url;
-    }
+        updateShopDto.shop_picture = uploadShopPict.secure_url;
+      }
 
-    if (files.shop_nib !== undefined) {
-      const uploadShopNib = await this.cloudinaryService.uploadImage(
-        files.shop_nib[0],
-        CLOUDINARY_FOLDER_SHOP_NIB,
-      );
+      if (files.shop_nib !== undefined) {
+        const uploadShopNib = await this.cloudinaryService.uploadImage(
+          files.shop_nib[0],
+          CLOUDINARY_FOLDER_SHOP_NIB,
+        );
 
-      updateShopDto.nib = uploadShopNib.secure_url;
+        updateShopDto.nib = uploadShopNib.secure_url;
+      }
     }
 
     const updateShop = await this.shopsRepository.update(id, {
