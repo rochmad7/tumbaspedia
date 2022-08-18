@@ -73,11 +73,20 @@ export class ProductPicturesService {
   }
 
   async findPicturesByProductId(productId: number): Promise<ProductPicture[]> {
-    const product = await this.productsService.findOne(productId);
+    // const product = await this.productsService.findOne(productId);
 
-    return await this.productPicturesRepository.find({
-      where: { product },
-    });
+    // console.log(product);
+    // const productPictures = await this.productPicturesRepository.find({
+    //   where: { product },
+    // });
+    //
+    // console.log(productPictures);
+    // return productPictures;
+
+    return this.productPicturesRepository
+      .createQueryBuilder('product_picture')
+      .where('product_picture.product_id = :productId', { productId })
+      .getMany();
   }
 
   update(id: number, updateProductPictureDto: UpdateProductPictureDto) {

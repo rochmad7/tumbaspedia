@@ -19,7 +19,7 @@ export class ProductPicture {
   @Column()
   picture_url: string;
 
-  @ManyToOne((type) => Product, (product) => product.product_pictures)
+  @ManyToOne(() => Product, (product) => product.product_pictures)
   @JoinColumn({ name: 'product_id' })
   product: Product;
 

@@ -17,10 +17,7 @@ import { AuthService } from './auth.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { ErrorResponse, SuccessResponse } from '../app.service';
 import { RegisterShopDto } from './dto/register-shop.dto';
-import {
-  FileFieldsInterceptor,
-  FileInterceptor,
-} from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
 @Controller('auth')
 export class AuthController {
@@ -64,20 +61,12 @@ export class AuthController {
   }
 
   @Get('/confirm/:token')
-  async confirmUser(
-    @Param('token') token: string,
-  ): Promise<SuccessResponse | ErrorResponse> {
+  async confirmUser(@Param('token') token: string) {
     try {
       const confirm = await this.authService.confirmUser(token);
-      return {
-        message: 'Berhasil konfirmasi akun',
-        data: confirm,
-      };
+      return `Berhasil konfirmasi akun ${confirm.email}`;
     } catch (error) {
-      return {
-        message: 'Gagal konfirmasi akun',
-        errors: error,
-      };
+      return `Gagal konfirmasi akun ${error}`;
     }
   }
 
@@ -104,20 +93,28 @@ export class AuthController {
   @Post('reset-password/:token')
   async resetPassword(
     @Param('token') token: string,
-    @Body() authCredentialsDto: AuthCredentialsDto,
+    @Body('new_password') newPassword: string,
+    @Body('confirm_password') confirmPassword: string,
   ): Promise<SuccessResponse | ErrorResponse> {
+    if (newPassword !== confirmPassword) {
+      return {
+        message: 'Password tidak sama',
+        errors: null,
+      };
+    }
+
     try {
       const resetPassword = await this.authService.resetPassword(
         token,
-        authCredentialsDto.password,
+        newPassword,
       );
       return {
-        message: 'Berhasil konfirmasi akun',
+        message: 'Berhasil reset password',
         data: resetPassword,
       };
     } catch (error) {
       return {
-        message: 'Gagal konfirmasi akun',
+        message: 'Gagal reset password',
         errors: error,
       };
     }

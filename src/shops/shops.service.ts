@@ -64,20 +64,32 @@ export class ShopsService {
   async findAll(search: string, sortBy: string): Promise<Shop[]> {
     let shops: Shop[];
     if (search) {
-      shops = await this.shopsRepository.find({
-        where: {
-          name: Like(`%${search}%`),
-        },
-        order: {
-          [sortBy]: 'DESC',
-        },
-      });
+      if (sortBy) {
+        shops = await this.shopsRepository.find({
+          where: {
+            name: Like(`%${search}%`),
+          },
+          order: {
+            [sortBy]: 'DESC',
+          },
+        });
+      } else {
+        shops = await this.shopsRepository.find({
+          where: {
+            name: Like(`%${search}%`),
+          },
+        });
+      }
     } else {
-      shops = await this.shopsRepository.find({
-        order: {
-          [sortBy]: 'DESC',
-        },
-      });
+      if (sortBy) {
+        shops = await this.shopsRepository.find({
+          order: {
+            [sortBy]: 'DESC',
+          },
+        });
+      } else {
+        shops = await this.shopsRepository.find();
+      }
     }
 
     for (const item of shops) {

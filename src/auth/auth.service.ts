@@ -169,12 +169,12 @@ export class AuthService {
     }
 
     const shop = await this.shopsService.findOneByUserID(user.id);
-    if (!shop.is_verified) {
-      await this.shopsService.update(shop.id, {
-        is_verified: true,
-      });
-      shop.is_verified = true;
-    }
+    // if (!shop.is_verified) {
+    //   await this.shopsService.update(shop.id, {
+    //     is_verified: true,
+    //   });
+    //   shop.is_verified = true;
+    // }
 
     return shop;
   }
