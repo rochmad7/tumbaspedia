@@ -1,6 +1,8 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { User } from '../users/entities/user.entity';
+import { Product } from '../products/entities/product.entity';
+import { Transaction } from '../transactions/entities/transaction.entity';
 
 @Injectable()
 export class MailService {
@@ -49,6 +51,27 @@ export class MailService {
       context: {
         // ✏️ filling curly brackets with content
         url,
+      },
+    });
+  }
+
+  async sendShopOrderNotification(
+    transaction: Transaction,
+  ) {
+    await this.mailerService.sendMail({
+      to: transaction.shop.user.email,
+      subject: 'Pesanan Baru',
+      template: './shop-order-notification', // `.hbs` extension is appended automatically
+      context: {
+        // ✏️ filling curly brackets with content
+        shopName: transaction.shop.name,
+        productName: transaction.product.name,
+        quantity: transaction.quantity,
+        productPrice: transaction.product.price,
+        totalPrice: transaction.total,
+        userAddress: transaction.user.address,
+        userName: transaction.user.name,
+        userPhoneNumber: transaction.user.phone_number,
       },
     });
   }

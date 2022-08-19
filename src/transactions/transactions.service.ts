@@ -12,6 +12,7 @@ import { Repository } from 'typeorm';
 import { ShopsService } from '../shops/shops.service';
 import { UsersService } from '../users/users.service';
 import { ProductsService } from '../products/products.service';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class TransactionsService {
@@ -22,6 +23,7 @@ export class TransactionsService {
     private readonly shopsService: ShopsService,
     private readonly usersService: UsersService,
     private readonly productsService: ProductsService,
+    private readonly mailService: MailService,
   ) {}
 
   async create(
@@ -55,7 +57,11 @@ export class TransactionsService {
       stock: product.stock - createTransactionDto.quantity,
     });
 
-    return await this.transactionRepository.save(transaction);
+    const transactionSave = await this.transactionRepository.save(transaction);
+
+    await this.mailService.sendShopOrderNotification(transaction);
+
+    return transactionSave;
   }
 
   async findAll(search: number, status: string): Promise<Transaction[]> {

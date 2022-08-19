@@ -33,7 +33,7 @@ import { MailModule } from './mail/mail.module';
         entities: ['dist/src/**/entities/*.js'],
         migrationsTableName: 'migration_table',
         synchronize: false,
-        logging: false,
+        logging: true,
         migrations: ['dist/database/migrations/*.js'],
       }),
     }),

@@ -6,12 +6,14 @@ import { Transaction } from './entities/transaction.entity';
 import { ProductsModule } from '../products/products.module';
 import { ShopsModule } from '../shops/shops.module';
 import { UsersModule } from '../users/users.module';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Transaction]),
     ProductsModule,
     UsersModule,
+    MailModule,
     forwardRef(() => ShopsModule),
   ],
   controllers: [TransactionsController],
