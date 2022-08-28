@@ -55,9 +55,7 @@ export class MailService {
     });
   }
 
-  async sendShopOrderNotification(
-    transaction: Transaction,
-  ) {
+  async sendShopOrderNotification(transaction: Transaction) {
     await this.mailerService.sendMail({
       to: transaction.shop.user.email,
       subject: 'Pesanan Baru',

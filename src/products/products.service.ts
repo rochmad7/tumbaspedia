@@ -82,6 +82,9 @@ export class ProductsService {
     if (isNaN(limit)) {
       limit = 10;
     }
+    if (categoryId == -1) {
+      categoryId = null;
+    }
     let whereQuery = '';
 
     if (search) {
@@ -91,8 +94,7 @@ export class ProductsService {
           whereQuery += ` AND product.category_id = ${categoryId}`;
         }
         whereQuery += ` AND product.shop_id = ${shopId}`;
-      }
-      if (categoryId) {
+      } else if (categoryId) {
         whereQuery += ` AND product.category_id = ${categoryId}`;
       }
     } else {
@@ -101,8 +103,7 @@ export class ProductsService {
           whereQuery += `product.category_id = ${categoryId} AND`;
         }
         whereQuery += ` product.shop_id = ${shopId}`;
-      }
-      if (categoryId) {
+      } else if (categoryId) {
         whereQuery += ` product.category_id = ${categoryId}`;
       }
     }
