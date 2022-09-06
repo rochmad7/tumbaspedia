@@ -28,7 +28,7 @@ export class AuthService {
     private readonly mailService: MailService,
   ) {}
 
-  async register(registerUserDto: RegisterUserDto): Promise<void> {
+  async register(registerUserDto: RegisterUserDto): Promise<User> {
     const user = await this.usersService.create(registerUserDto);
 
     const token = this.jwtService.sign({
@@ -36,6 +36,8 @@ export class AuthService {
     });
 
     await this.mailService.sendUserConfirmation(user.name, user.email, token);
+
+    return user;
   }
 
   async registerShop(

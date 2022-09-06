@@ -115,7 +115,12 @@ export class UsersController {
 
     const isMatch = await bcrypt.compare(oldPassword, user.password);
     if (!isMatch) {
-      throw new UnauthorizedException('Password lama tidak sesuai');
+      return {
+        message: 'Password lama tidak sesuai',
+        errors: {
+          message: 'Password lama tidak sesuai',
+        },
+      };
     }
 
     try {

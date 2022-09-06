@@ -14,5 +14,5 @@ export class SuccessResponse {
 
 export class ErrorResponse {
   message: string;
-  errors: [string];
+  errors: any;
 }
