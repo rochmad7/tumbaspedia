@@ -74,10 +74,7 @@ export class CategoriesController {
     @Body() updateCategoryDto: UpdateCategoryDto,
   ): Promise<SuccessResponse | ErrorResponse> {
     try {
-      const categories = await this.categoriesService.update(
-        +id,
-        updateCategoryDto,
-      );
+      await this.categoriesService.update(+id, updateCategoryDto);
       return {
         message: 'Data kategori berhasil diubah',
         data: null,

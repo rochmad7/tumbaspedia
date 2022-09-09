@@ -186,9 +186,11 @@ export class AuthService {
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
+
     const token = this.jwtService.sign({
       email: user.email,
     });
+
     await this.mailService.sendPasswordReset(user.email, token);
   }
 

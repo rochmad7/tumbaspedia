@@ -6,6 +6,10 @@
       {
         "include": "mail/templates/**/*",
         "outDir": "dist/src"
+      },
+      {
+        "include": "../views/**/*",
+        "outDir": "dist/views"
       }
     ],
     "watchAssets": true
