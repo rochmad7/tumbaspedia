@@ -124,8 +124,8 @@ export class AuthService {
   ): Promise<{ access_token: string; shop: Shop }> {
     const { email, password } = authCredentialsDto;
     const user = await this.usersService.findOneByEmail(email);
-    if (user.role.id !== ConstRole.SELLER) {
-      throw new UnauthorizedException('Invalid credentials');
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
     const shop = await this.shopsService.findOneByUserID(user.id);

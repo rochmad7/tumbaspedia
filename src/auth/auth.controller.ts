@@ -95,7 +95,7 @@ export class AuthController {
     }
 
     try {
-      const resetPassword = await this.authService.resetPassword(
+      await this.authService.resetPassword(
         token,
         newPassword,
       );
