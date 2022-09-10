@@ -11,7 +11,7 @@ export class MailService {
   async sendUserConfirmation(userName, email, token: string) {
     const url = `${process.env.APP_URL}/auth/confirm/${token}`;
 
-    const a = await this.mailerService.sendMail({
+    await this.mailerService.sendMail({
       to: email,
       // from: '"Support Team" <support@example.com>', // override default from
       subject: 'Selamat Datang di Tumbaspedia!',
@@ -22,8 +22,6 @@ export class MailService {
         url,
       },
     });
-
-    console.log(a);
   }
 
   async sendShopConfirmation(shopName, email, token: string) {
@@ -45,7 +43,7 @@ export class MailService {
   async sendPasswordReset(email, token: string) {
     const url = `${process.env.APP_URL}/reset-password/${token}`;
 
-    const a = await this.mailerService.sendMail({
+    await this.mailerService.sendMail({
       to: email,
       // from: '"Support Team" <
       subject: 'Reset Password',
@@ -55,8 +53,6 @@ export class MailService {
         url,
       },
     });
-
-    console.log(a);
   }
 
   async sendShopOrderNotification(transaction: Transaction) {

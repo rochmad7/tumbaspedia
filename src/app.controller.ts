@@ -1,4 +1,4 @@
-import { Controller, Get, Render } from '@nestjs/common';
+import { Controller, Get, Param, Render } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
@@ -10,9 +10,11 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Get('reset-password')
+  @Get('reset-password/:token')
   @Render('change-password')
-  root(url: string) {
+  root(@Param('token') token: string) {
+    const url = `${process.env.APP_URL}/auth/reset-password/${token}`;
+
     return { url };
   }
 }
