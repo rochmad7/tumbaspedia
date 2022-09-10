@@ -45,18 +45,12 @@ export class AuthController {
   @Get('/shop/confirm/:token')
   async confirmShop(
     @Param('token') token: string,
-  ): Promise<SuccessResponse | ErrorResponse> {
+  ) {
     try {
       const confirm = await this.authService.confirmShop(token);
-      return {
-        message: 'Berhasil konfirmasi akun seller',
-        data: confirm,
-      };
+      return 'Berhasil konfirmasi akun';
     } catch (error) {
-      return {
-        message: 'Gagal konfirmasi akun seller',
-        errors: error,
-      };
+      return 'Gagal konfirmasi akun';
     }
   }
 
@@ -95,12 +89,9 @@ export class AuthController {
     @Param('token') token: string,
     @Body('new_password') newPassword: string,
     @Body('confirm_password') confirmPassword: string,
-  ): Promise<SuccessResponse | ErrorResponse> {
+  ) {
     if (newPassword !== confirmPassword) {
-      return {
-        message: 'Password tidak sama',
-        errors: null,
-      };
+      return 'Password tidak sama';
     }
 
     try {
@@ -108,15 +99,9 @@ export class AuthController {
         token,
         newPassword,
       );
-      return {
-        message: 'Berhasil reset password',
-        data: resetPassword,
-      };
+      return 'Berhasil reset password';
     } catch (error) {
-      return {
-        message: 'Gagal reset password',
-        errors: error,
-      };
+      return 'Gagal reset password';
     }
   }
 
