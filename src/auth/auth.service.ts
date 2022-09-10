@@ -17,6 +17,7 @@ import { Shop } from '../shops/entities/shop.entity';
 import { RegisterShopDto } from './dto/register-shop.dto';
 import { RolesService } from '../roles/roles.service';
 import { MailService } from '../mail/mail.service';
+import { use } from "passport";
 
 @Injectable()
 export class AuthService {
@@ -134,11 +135,13 @@ export class AuthService {
       const payload: ShopJwtPayload = {
         user: {
           id: user.id,
-          role_id: user.role.id,
+          role_id: ConstRole.SELLER,
         },
         shop_id: shop.id,
       };
+
       const accessToken = this.jwtService.sign(payload);
+
       return { access_token: accessToken, shop };
     } else {
       throw new UnauthorizedException('Invalid credentials');
@@ -147,7 +150,6 @@ export class AuthService {
 
   async confirmUser(token: string): Promise<User> {
     const verifyToken = this.jwtService.verify(token);
-    // console.log(verifyToken.email);
     const user = await this.usersService.findOneByEmailNotVerified(
       verifyToken.email,
     );
