@@ -123,7 +123,7 @@ export class AuthService {
     authCredentialsDto: AuthCredentialsDto,
   ): Promise<{ access_token: string; shop: Shop }> {
     const { email, password } = authCredentialsDto;
-    const user = await this.usersService.findOneByEmail(email);
+    const user = await this.usersService.findOneByEmail(email, true);
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }

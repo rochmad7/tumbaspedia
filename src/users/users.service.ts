@@ -85,7 +85,14 @@ export class UsersService {
     return user;
   }
 
-  async findOneByEmail(email: string): Promise<User> {
+  async findOneByEmail(email: string, isShopUser?: boolean): Promise<User> {
+    if (isShopUser) {
+      return await this.userRepository.findOne({
+        where: { email, is_verified: true },
+        relations: ['shop'],
+      });
+    }
+
     const user = await this.userRepository.findOne({
       where: { email, is_verified: true },
     });
