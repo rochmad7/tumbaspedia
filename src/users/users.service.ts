@@ -87,10 +87,13 @@ export class UsersService {
 
   async findOneByEmail(email: string, isShopUser?: boolean): Promise<User> {
     if (isShopUser) {
-      return await this.userRepository.findOne({
-        where: { email, is_verified: true },
-        relations: ['shop'],
-      });
+      return await this.userRepository
+        .createQueryBuilder('user')
+        .select()
+        .where('user.email = :email', { email })
+        .andWhere('user.is_verified = true')
+        .andWhere('user.role = :roleId', { roleId: ConstRole.SELLER })
+        .getOne();
     }
 
     const user = await this.userRepository.findOne({
