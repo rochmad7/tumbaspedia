@@ -85,6 +85,29 @@ export class UsersController {
     }
   }
 
+  @Get('me')
+  @Roles(ConstRole.ADMIN, ConstRole.SELLER, ConstRole.BUYER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async getMyProfile(
+    @Req() req: any,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    const user = await this.usersService.findOneById(req.user.id);
+
+    if (!user) {
+      return {
+        message: 'User tidak ditemukan',
+        errors: {
+          message: 'User tidak ditemukan',
+        },
+      };
+    }
+
+    return {
+      message: 'Berhasil mengambil user',
+      data: user,
+    };
+  }
+
   @Get(':id')
   async findOne(
     @Param('id') id: string,
@@ -173,6 +196,28 @@ export class UsersController {
     } catch (error) {
       return {
         message: 'Gagal menghapus user',
+        errors: error,
+      };
+    }
+  }
+
+  @Post('upload-profile-picture')
+  @Roles(ConstRole.ADMIN, ConstRole.SELLER, ConstRole.BUYER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseInterceptors(FileInterceptor('profile_picture'))
+  async uploadProfilePicture(
+    @UploadedFile() file: Express.Multer.File,
+    @Req() req: any,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      await this.usersService.uploadImageToCloudinary(req.user.id, file);
+      return {
+        message: 'Berhasil mengubah foto profil',
+        data: null,
+      };
+    } catch (error) {
+      return {
+        message: 'Gagal mengubah foto profil',
         errors: error,
       };
     }
