@@ -139,27 +139,6 @@ export class ShopsController {
     }
   }
 
-  @Roles(ConstRole.ADMIN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Patch('verify/:id')
-  async verify(
-    @Param('id') id: string,
-    @Body('is_verified') isVerified: boolean,
-  ): Promise<SuccessResponse | ErrorResponse> {
-    try {
-      const shop = await this.shopsService.verifyShop(+id, isVerified);
-      return {
-        message: 'Berhasil mengaktifkan toko',
-        data: shop,
-      };
-    } catch (error) {
-      return {
-        message: 'Gagal mengaktifkan toko',
-        errors: error,
-      };
-    }
-  }
-
   @Roles(ConstRole.ADMIN, ConstRole.SELLER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @UseInterceptors(
@@ -181,12 +160,33 @@ export class ShopsController {
     try {
       await this.shopsService.update(+id, updateShopDto, files);
       return {
-        message: 'Berhasil mengubah toko',
+        message: 'Berhasil mengubah data toko',
         data: null,
       };
     } catch (error) {
       return {
-        message: 'Gagal mengubah toko',
+        message: 'Gagal mengubah data toko',
+        errors: error,
+      };
+    }
+  }
+
+  @Roles(ConstRole.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Patch('verify/:id')
+  async verify(
+    @Param('id') id: string,
+    @Body('is_verified') isVerified: boolean,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    try {
+      const shop = await this.shopsService.verifyShop(+id, isVerified);
+      return {
+        message: 'Berhasil mengaktifkan toko',
+        data: shop,
+      };
+    } catch (error) {
+      return {
+        message: 'Gagal mengaktifkan toko',
         errors: error,
       };
     }
