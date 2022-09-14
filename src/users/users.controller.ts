@@ -168,10 +168,10 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<SuccessResponse | ErrorResponse> {
     try {
-      await this.usersService.update(+id, updateUserDto);
+      const user = await this.usersService.update(+id, updateUserDto);
       return {
         message: 'Berhasil mengubah user',
-        data: null,
+        data: user,
       };
     } catch (error) {
       return {
