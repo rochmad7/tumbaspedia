@@ -2,8 +2,8 @@ import {
   forwardRef,
   Inject,
   Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+  NotFoundException, UnauthorizedException
+} from "@nestjs/common";
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { Transaction } from './entities/transaction.entity';
@@ -38,12 +38,16 @@ export class TransactionsService {
       createTransactionDto.user_id,
     );
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Pengguna tidak ditemukan');
     }
 
     const product = await this.productsService.findOne(
       createTransactionDto.product_id,
     );
+
+    if (product.shop.user.email === user.email) {
+      throw new UnauthorizedException('Anda tidak bisa membeli produk sendiri');
+    }
 
     const transaction = await this.transactionRepository.create({
       ...createTransactionDto,
