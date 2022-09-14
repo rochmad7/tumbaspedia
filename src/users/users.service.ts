@@ -164,13 +164,15 @@ export class UsersService {
     });
   }
 
-  async changePassword(id: number, password: string): Promise<UpdateResult> {
+  async changePassword(id: number, password: string): Promise<User> {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    return await this.userRepository.update(id, {
+    await this.userRepository.update(id, {
       password: hashedPassword,
     });
+
+    return await this.findOneById(id);
   }
 
   async checkUser(createUserDto: CreateUserDto): Promise<User> {

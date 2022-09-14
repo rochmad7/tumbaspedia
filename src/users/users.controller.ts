@@ -147,10 +147,13 @@ export class UsersController {
     }
 
     try {
-      await this.usersService.changePassword(+req.user.id, newPassword);
+      const user = await this.usersService.changePassword(
+        +req.user.id,
+        newPassword,
+      );
       return {
         message: 'Berhasil mengubah password',
-        data: null,
+        data: user,
       };
     } catch (error) {
       return {
