@@ -108,6 +108,8 @@ export class ShopsController {
       const shops = await this.shopsService.findAll(
         query['search'],
         query['sort_by'],
+        query['limit'],
+        query['page'],
       );
       return {
         message: 'Berhasil mengambil semua toko',

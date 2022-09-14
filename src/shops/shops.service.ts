@@ -3,20 +3,18 @@ import {
   Inject,
   Injectable,
   NotFoundException,
-  UploadedFiles,
 } from '@nestjs/common';
 import { CreateShopDto } from './dto/create-shop.dto';
 import { UpdateShopDto } from './dto/update-shop.dto';
 import { Shop } from './entities/shop.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { UsersService } from '../users/users.service';
 import { RolesService } from '../roles/roles.service';
 import {
   CLOUDINARY_FOLDER_SHOP,
   CLOUDINARY_FOLDER_SHOP_NIB,
-  ConstRole,
   DEFAULT_SHOP_PICTURE,
 } from '../constants';
 import { ProductsService } from '../products/products.service';
@@ -61,44 +59,40 @@ export class ShopsService {
     }
   }
 
-  async findAll(search: string, sortBy: string): Promise<Shop[]> {
-    let shops: Shop[];
+  async findAll(
+    search: string,
+    sortBy: string,
+    limit: number,
+    page: number,
+  ): Promise<Shop[]> {
+    if (isNaN(page) || page === 0) {
+      page = 1;
+    }
+    if (isNaN(limit)) {
+      limit = 10;
+    }
+
+    let whereQuery = '';
+
     if (search) {
-      if (sortBy) {
-        shops = await this.shopsRepository.find({
-          where: {
-            name: Like(`%${search}%`),
-          },
-          order: {
-            [sortBy]: 'DESC',
-          },
-        });
-      } else {
-        shops = await this.shopsRepository.find({
-          where: {
-            name: Like(`%${search}%`),
-          },
-        });
-      }
-    } else {
-      if (sortBy) {
-        shops = await this.shopsRepository.find({
-          order: {
-            [sortBy]: 'DESC',
-          },
-        });
-      } else {
-        shops = await this.shopsRepository.find();
-      }
+      whereQuery = `shop.name LIKE '%${search}%'`;
     }
 
-    for (const item of shops) {
-      item.total_products = await this.productsService.countProductsByShop(
-        item.id,
-      );
-    }
+    // for (const item of shops) {
+    //   item.total_products = await this.productsService.countProductsByShop(
+    //     item.id,
+    //   );
+    // }
 
-    return shops;
+    return await this.shopsRepository
+      .createQueryBuilder('shop')
+      .leftJoinAndSelect('shop.user', 'user')
+      .leftJoinAndSelect('user.role', 'role')
+      .where(whereQuery)
+      // .orderBy(`shop.${sortBy}`, 'ASC')
+      .skip((page - 1) * 10)
+      .limit(limit)
+      .getMany();
   }
 
   async findOne(id: number): Promise<Shop> {
