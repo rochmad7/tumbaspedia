@@ -89,7 +89,7 @@ export class ShopsService {
       .leftJoinAndSelect('shop.user', 'user')
       .leftJoinAndSelect('user.role', 'role')
       .where(whereQuery)
-      // .orderBy(`shop.${sortBy}`, 'ASC')
+      .orderBy(`shop.id`, 'ASC')
       .skip((page - 1) * 10)
       .limit(limit)
       .getMany();
