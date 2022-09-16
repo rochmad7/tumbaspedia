@@ -110,7 +110,7 @@ export class TransactionsController {
   }
 
   @Patch(':id')
-  @Roles(ConstRole.BUYER, ConstRole.SELLER)
+  @Roles(ConstRole.BUYER, ConstRole.SELLER, ConstRole.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async update(
     @Param('id') id: string,

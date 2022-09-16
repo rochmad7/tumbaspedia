@@ -3,6 +3,7 @@ import { IsNotEmpty } from 'class-validator';
 export class CreateTransactionDto {
   user_id: number;
 
+  @IsNotEmpty()
   product_id: number;
 
   shop_id: number;
@@ -10,7 +11,6 @@ export class CreateTransactionDto {
   @IsNotEmpty()
   quantity: number;
 
-  @IsNotEmpty()
   total: number;
 
   status: string;

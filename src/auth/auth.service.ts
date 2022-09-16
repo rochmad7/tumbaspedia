@@ -2,6 +2,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
@@ -17,7 +18,7 @@ import { Shop } from '../shops/entities/shop.entity';
 import { RegisterShopDto } from './dto/register-shop.dto';
 import { RolesService } from '../roles/roles.service';
 import { MailService } from '../mail/mail.service';
-import { use } from "passport";
+import { use } from 'passport';
 
 @Injectable()
 export class AuthService {
@@ -86,12 +87,21 @@ export class AuthService {
     authCredentialsDto: AuthCredentialsDto,
   ): Promise<{ access_token: string; user: User }> {
     const { email, password } = authCredentialsDto;
-    const user = await this.usersService.findOneByEmail(email);
+    const user = await this.usersService.findOneByEmail(
+      email,
+      true,
+      ConstRole.BUYER,
+    );
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
 
     if (user && (await bcrypt.compare(password, user.password))) {
+      console.log('credentials match');
       const payload: JwtPayload = {
         user: { id: user.id, role_id: user.role.id },
       };
+      console.log('payload exists');
       const accessToken = this.jwtService.sign(payload);
       return { access_token: accessToken, user };
     } else {
@@ -103,10 +113,14 @@ export class AuthService {
     authCredentialsDto: AuthCredentialsDto,
   ): Promise<{ access_token: string; user: User }> {
     const { email, password } = authCredentialsDto;
-    const user = await this.usersService.findOneByEmail(email);
+    const user = await this.usersService.findOneByEmail(
+      email,
+      true,
+      ConstRole.ADMIN,
+    );
 
-    if (user.role.id !== ConstRole.ADMIN) {
-      throw new UnauthorizedException('Invalid credentials');
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
     if (user && (await bcrypt.compare(password, user.password))) {
@@ -124,7 +138,11 @@ export class AuthService {
     authCredentialsDto: AuthCredentialsDto,
   ): Promise<{ access_token: string; shop: Shop }> {
     const { email, password } = authCredentialsDto;
-    const user = await this.usersService.findOneByEmail(email, true);
+    const user = await this.usersService.findOneByEmail(
+      email,
+      true,
+      ConstRole.SELLER,
+    );
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
@@ -184,7 +202,7 @@ export class AuthService {
   }
 
   async sendResetPasswordEmail(email: string): Promise<void> {
-    const user = await this.usersService.findOneByEmail(email);
+    const user = await this.usersService.findOneByEmail(email, false);
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }

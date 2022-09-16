@@ -85,14 +85,19 @@ export class UsersService {
     return user;
   }
 
-  async findOneByEmail(email: string, isShopUser?: boolean): Promise<User> {
-    if (isShopUser) {
+  async findOneByEmail(
+    email: string,
+    isCustomRole: boolean,
+    roleId?: number,
+  ): Promise<User> {
+    if (isCustomRole) {
       return await this.userRepository
         .createQueryBuilder('user')
         .select()
+        .leftJoinAndSelect('user.role', 'role')
         .where('user.email = :email', { email })
         .andWhere('user.is_verified = true')
-        .andWhere('user.role = :roleId', { roleId: ConstRole.SELLER })
+        .andWhere('user.role = :roleId', { roleId })
         .getOne();
     }
 

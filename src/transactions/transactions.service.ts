@@ -29,11 +29,6 @@ export class TransactionsService {
   async create(
     createTransactionDto: CreateTransactionDto,
   ): Promise<Transaction> {
-    const shop = await this.shopsService.findOne(createTransactionDto.shop_id);
-    if (!shop) {
-      throw new NotFoundException('Shop not found');
-    }
-
     const user = await this.usersService.findOneById(
       createTransactionDto.user_id,
     );
@@ -51,8 +46,9 @@ export class TransactionsService {
 
     const transaction = await this.transactionRepository.create({
       ...createTransactionDto,
+      total: product.price * createTransactionDto.quantity,
       status: 'pending',
-      shop,
+      shop: product.shop,
       user,
       product,
     });
