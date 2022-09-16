@@ -89,6 +89,7 @@ export class ShopsService {
       .leftJoinAndSelect('shop.user', 'user')
       .leftJoinAndSelect('user.role', 'role')
       .where(whereQuery)
+      .andWhere('shop.is_verified = true')
       .orderBy(`shop.id`, 'ASC')
       .skip((page - 1) * 10)
       .limit(limit)
@@ -96,7 +97,9 @@ export class ShopsService {
   }
 
   async findOne(id: number): Promise<Shop> {
-    const shop = await this.shopsRepository.findOne({ where: { id } });
+    const shop = await this.shopsRepository.findOne({
+      where: { id, is_verified: true },
+    });
     if (!shop) {
       throw new NotFoundException(`Shop not found`);
     }
