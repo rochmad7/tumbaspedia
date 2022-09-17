@@ -115,9 +115,15 @@ export class TransactionsController {
   async update(
     @Param('id') id: string,
     @Body() updateTransactionDto: UpdateTransactionDto,
+    @Req() req,
   ): Promise<SuccessResponse | ErrorResponse> {
+    updateTransactionDto.user_id = req.user.id;
+
     try {
-      const transaction = await this.transactionsService.update(+id, updateTransactionDto);
+      const transaction = await this.transactionsService.update(
+        +id,
+        updateTransactionDto,
+      );
 
       return {
         message: 'Transaksi berhasil diubah',

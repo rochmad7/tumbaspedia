@@ -106,20 +106,30 @@ export class TransactionsService {
     id: number,
     updateTransactionDto: UpdateTransactionDto,
   ): Promise<Transaction> {
+    if (updateTransactionDto.status === 'completed') {
+      const updateTransaction = await this.transactionRepository.update(id, {
+        status: updateTransactionDto.status,
+        confirmed_at: new Date(),
+      });
+      if (updateTransaction.affected === 0) {
+        throw new NotFoundException('Transaction not found');
+      }
+
+      const transaction = await this.findOne(id, updateTransactionDto.user_id);
+      await this.productsService.updateSold(
+        transaction.product.id,
+        transaction.quantity,
+      );
+
+      return transaction;
+    }
+
     const updateTransaction = await this.transactionRepository.update(
       id,
       updateTransactionDto,
     );
     if (updateTransaction.affected === 0) {
       throw new NotFoundException('Transaction not found');
-    }
-
-    if (updateTransactionDto.status === 'completed') {
-      const transaction = await this.findOne(id, updateTransactionDto.user_id);
-      await this.productsService.updateSold(
-        transaction.product.id,
-        transaction.quantity,
-      );
     }
 
     return await this.findOne(id, updateTransactionDto.user_id);
