@@ -2,8 +2,9 @@ import {
   forwardRef,
   Inject,
   Injectable,
-  NotFoundException, UnauthorizedException
-} from "@nestjs/common";
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { Transaction } from './entities/transaction.entity';
@@ -104,7 +105,7 @@ export class TransactionsService {
   async update(
     id: number,
     updateTransactionDto: UpdateTransactionDto,
-  ): Promise<void> {
+  ): Promise<Transaction> {
     const updateTransaction = await this.transactionRepository.update(
       id,
       updateTransactionDto,
@@ -120,6 +121,8 @@ export class TransactionsService {
         transaction.quantity,
       );
     }
+
+    return await this.findOne(id, updateTransactionDto.user_id);
   }
 
   async remove(id: number): Promise<void> {

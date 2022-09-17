@@ -117,11 +117,11 @@ export class TransactionsController {
     @Body() updateTransactionDto: UpdateTransactionDto,
   ): Promise<SuccessResponse | ErrorResponse> {
     try {
-      await this.transactionsService.update(+id, updateTransactionDto);
+      const transaction = await this.transactionsService.update(+id, updateTransactionDto);
 
       return {
         message: 'Transaksi berhasil diubah',
-        data: null,
+        data: transaction,
       };
     } catch (error) {
       return {
