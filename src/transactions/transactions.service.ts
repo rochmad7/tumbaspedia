@@ -106,7 +106,7 @@ export class TransactionsService {
     id: number,
     updateTransactionDto: UpdateTransactionDto,
   ): Promise<Transaction> {
-    if (updateTransactionDto.status === 'completed') {
+    if (updateTransactionDto.status === 'delivered') {
       const updateTransaction = await this.transactionRepository.update(id, {
         status: updateTransactionDto.status,
         confirmed_at: new Date(),
