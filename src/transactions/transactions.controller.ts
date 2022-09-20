@@ -117,8 +117,6 @@ export class TransactionsController {
     @Body() updateTransactionDto: UpdateTransactionDto,
     @Req() req,
   ): Promise<SuccessResponse | ErrorResponse> {
-    updateTransactionDto.user_id = req.user.id;
-
     try {
       const transaction = await this.transactionsService.update(
         +id,
