@@ -78,13 +78,7 @@ export class ShopsService {
       whereQuery = `shop.name LIKE '%${search}%'`;
     }
 
-    // for (const item of shops) {
-    //   item.total_products = await this.productsService.countProductsByShop(
-    //     item.id,
-    //   );
-    // }
-
-    return await this.shopsRepository
+    const shops = await this.shopsRepository
       .createQueryBuilder('shop')
       .leftJoinAndSelect('shop.user', 'user')
       .leftJoinAndSelect('user.role', 'role')
@@ -94,6 +88,14 @@ export class ShopsService {
       .skip((page - 1) * 10)
       .limit(limit)
       .getMany();
+
+    for (const shop of shops) {
+      shop.total_products = await this.productsService.countProductsByShop(
+        shop.id,
+      );
+    }
+
+    return shops;
   }
 
   async findOne(id: number): Promise<Shop> {
