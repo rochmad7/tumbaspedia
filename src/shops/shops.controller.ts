@@ -160,10 +160,10 @@ export class ShopsController {
     },
   ): Promise<SuccessResponse | ErrorResponse> {
     try {
-      await this.shopsService.update(+id, updateShopDto, files);
+      const user = await this.shopsService.update(+id, updateShopDto, files);
       return {
         message: 'Berhasil mengubah data toko',
-        data: null,
+        data: user,
       };
     } catch (error) {
       return {

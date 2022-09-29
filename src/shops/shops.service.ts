@@ -22,6 +22,7 @@ import { Product } from '../products/entities/product.entity';
 import { TransactionsService } from '../transactions/transactions.service';
 import { Transaction } from '../transactions/entities/transaction.entity';
 import { MailService } from '../mail/mail.service';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class ShopsService {
@@ -127,7 +128,7 @@ export class ShopsService {
       shop_picture: Express.Multer.File[];
       shop_nib: Express.Multer.File[];
     },
-  ): Promise<void> {
+  ): Promise<User> {
     if (files !== undefined) {
       if (files.shop_picture !== undefined) {
         const uploadShopPict = await this.cloudinaryService.uploadImage(
@@ -154,6 +155,10 @@ export class ShopsService {
     if (updateShop.affected === 0) {
       throw new NotFoundException(`Shop not found`);
     }
+
+    const shop = await this.shopsRepository.findOne({ where: { id } });
+
+    return await this.usersService.findOneById(shop.user.id);
   }
 
   async remove(id: number): Promise<void> {
