@@ -43,14 +43,12 @@ export class AuthController {
   }
 
   @Get('/shop/confirm/:token')
-  async confirmShop(
-    @Param('token') token: string,
-  ) {
+  async confirmShop(@Param('token') token: string) {
     try {
       const confirm = await this.authService.confirmShop(token);
-      return 'Berhasil konfirmasi akun';
+      return `<h1>Berhasil konfirmasi akun seller ${confirm.name}</h1>`;
     } catch (error) {
-      return 'Gagal konfirmasi akun';
+      return '<h1>Gagal konfirmasi akun seller</h1>';
     }
   }
 
@@ -58,9 +56,9 @@ export class AuthController {
   async confirmUser(@Param('token') token: string) {
     try {
       const confirm = await this.authService.confirmUser(token);
-      return `Berhasil konfirmasi akun ${confirm.email}`;
+      return `<h1>Berhasil konfirmasi akun ${confirm.name}</h1>`;
     } catch (error) {
-      return `Gagal konfirmasi akun ${error}`;
+      return `<h1>Gagal konfirmasi akun</h1>`;
     }
   }
 
@@ -95,13 +93,10 @@ export class AuthController {
     }
 
     try {
-      await this.authService.resetPassword(
-        token,
-        newPassword,
-      );
-      return 'Berhasil reset password';
+      await this.authService.resetPassword(token, newPassword);
+      return `<h1>Password berhasil diubah</h1>`;
     } catch (error) {
-      return 'Gagal reset password';
+      return `<h1>Gagal mengubah password</h1>`;
     }
   }
 
