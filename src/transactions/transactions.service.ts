@@ -86,6 +86,7 @@ export class TransactionsService {
           id: userId,
         },
       },
+      withDeleted: true,
       relations: ['shop', 'user', 'product'],
     });
   }
