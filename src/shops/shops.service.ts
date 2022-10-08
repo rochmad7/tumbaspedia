@@ -65,6 +65,7 @@ export class ShopsService {
     sortBy: string,
     limit: number,
     page: number,
+    isVerified: boolean,
   ): Promise<Shop[]> {
     if (isNaN(page) || page === 0) {
       page = 1;
@@ -84,7 +85,7 @@ export class ShopsService {
       .leftJoinAndSelect('shop.user', 'user')
       .leftJoinAndSelect('user.role', 'role')
       .where(whereQuery)
-      .andWhere('shop.is_verified = true')
+      .andWhere('shop.is_verified = :isVerified', { isVerified })
       .orderBy(`shop.id`, 'ASC')
       .skip((page - 1) * 10)
       .limit(limit)

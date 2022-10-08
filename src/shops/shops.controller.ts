@@ -103,13 +103,22 @@ export class ShopsController {
   }
 
   @Get()
-  async findAll(@Query() query): Promise<SuccessResponse | ErrorResponse> {
+  async findAll(
+    @Query() query,
+    @Req() req,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    let isVerified = true;
+    if (req.user.role.id === ConstRole.ADMIN) {
+      isVerified = false;
+    }
+
     try {
       const shops = await this.shopsService.findAll(
         query['search'],
         query['sort_by'],
         query['limit'],
         query['page'],
+        isVerified,
       );
       return {
         message: 'Berhasil mengambil semua toko',
