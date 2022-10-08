@@ -103,12 +103,9 @@ export class ShopsController {
   }
 
   @Get()
-  async findAll(
-    @Query() query,
-    @Req() req,
-  ): Promise<SuccessResponse | ErrorResponse> {
+  async findAll(@Query() query): Promise<SuccessResponse | ErrorResponse> {
     let isVerified = true;
-    if (req.user.role.id === ConstRole.ADMIN) {
+    if (query['is_verified'] === 'false') {
       isVerified = false;
     }
 
