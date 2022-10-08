@@ -80,16 +80,29 @@ export class ShopsService {
       whereQuery = `shop.name LIKE '%${search}%'`;
     }
 
-    const shops = await this.shopsRepository
-      .createQueryBuilder('shop')
-      .leftJoinAndSelect('shop.user', 'user')
-      .leftJoinAndSelect('user.role', 'role')
-      .where(whereQuery)
-      .andWhere('shop.is_verified = :isVerified', { isVerified })
-      .orderBy(`shop.id`, 'ASC')
-      .skip((page - 1) * 10)
-      .limit(limit)
-      .getMany();
+    let shops: Shop[];
+    if (isVerified) {
+      shops = await this.shopsRepository
+        .createQueryBuilder('shop')
+        .leftJoinAndSelect('shop.user', 'user')
+        .leftJoinAndSelect('user.role', 'role')
+        .where(whereQuery)
+        .andWhere('shop.is_verified = true')
+        .orderBy(`shop.id`, 'ASC')
+        .skip((page - 1) * 10)
+        .limit(limit)
+        .getMany();
+    } else if (!isVerified) {
+      shops = await this.shopsRepository
+        .createQueryBuilder('shop')
+        .leftJoinAndSelect('shop.user', 'user')
+        .leftJoinAndSelect('user.role', 'role')
+        .where(whereQuery)
+        .orderBy(`shop.id`, 'ASC')
+        .skip((page - 1) * 10)
+        .limit(limit)
+        .getMany();
+    }
 
     for (const shop of shops) {
       shop.total_products = await this.productsService.countProductsByShop(
