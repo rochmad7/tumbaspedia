@@ -96,7 +96,6 @@ export class ShopsService {
       shops = await this.shopsRepository
         .createQueryBuilder('shop')
         .leftJoinAndSelect('shop.user', 'user')
-        .leftJoinAndSelect('user.role', 'role')
         .where(whereQuery)
         .orderBy(`shop.id`, 'ASC')
         .skip((page - 1) * 10)
