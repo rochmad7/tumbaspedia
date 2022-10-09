@@ -92,6 +92,12 @@ export class ShopsService {
         .skip((page - 1) * 10)
         .limit(limit)
         .getMany();
+
+      for (const shop of shops) {
+        shop.total_products = await this.productsService.countProductsByShop(
+          shop.id,
+        );
+      }
     } else if (!isVerified) {
       shops = await this.shopsRepository
         .createQueryBuilder('shop')
@@ -101,12 +107,6 @@ export class ShopsService {
         .skip((page - 1) * 10)
         .limit(limit)
         .getMany();
-    }
-
-    for (const shop of shops) {
-      shop.total_products = await this.productsService.countProductsByShop(
-        shop.id,
-      );
     }
 
     return shops;
