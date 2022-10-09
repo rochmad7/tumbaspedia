@@ -1,4 +1,4 @@
-name: Deploy Site on Push
+name: Deploy Site to Development
 on:
   push:
     branches:
