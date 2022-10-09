@@ -1,0 +1,44 @@
+name: Deploy Site to Production
+on:
+  push:
+    branches:
+      - release
+jobs:
+  web-deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the latest code
+        uses: actions/checkout@v3.0.2
+      - uses: actions/setup-node@master
+      - name: create env file
+        run: |
+          touch .env
+          echo ENGINE_API_KEY=${{ secrets.ENGINE_API_KEY }} >> .env
+          echo APP_URL=${{ secrets.APP_URL }} >> .env
+          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
+          echo DB_HOST=${{ secrets.DB_HOST }} >> .env
+          echo DB_USERNAME=${{ secrets.DB_USERNAME }} >> .env
+          echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
+          echo DB_NAME=${{ secrets.DB_NAME }} >> .env
+          echo DB_PORT=${{ secrets.DB_PORT }} >> .env
+          echo CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }} >> .env
+          echo CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }} >> .env
+          echo CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }} >> .env
+          echo CLOUDINARY_FOLDER=${{ secrets.CLOUDINARY_FOLDER }} >> .env
+          
+          echo MAIL_HOST=${{ secrets.MAIL_HOST }} >> .env
+          echo MAIL_PORT=${{ secrets.MAIL_PORT }} >> .env
+          echo MAIL_USERNAME_SHOP=${{ secrets.MAIL_USERNAME_SHOP }} >> .env
+          echo MAIL_PASSWORD_SHOP=${{ secrets.MAIL_PASSWORD_SHOP }} >> .env
+          echo MAIL_FROM=${{ secrets.MAIL_FROM }} >> .env
+      - name: Installing project dependencies
+        run: npm install
+      - name: Building the project
+        run: npm run build
+      - name: 📂 Sync files
+        uses: SamKirkland/FTP-Deploy-Action@4.0.0
+        with:
+          server: ${{ secrets.DEV_SITE_SERVER}}
+          username: ${{ secrets.DEV_SITE_USER}}
+          password: ${{ secrets.DEV_SITE_PASS}}
