@@ -114,7 +114,7 @@ export class ShopsService {
 
   async findOne(id: number): Promise<Shop> {
     const shop = await this.shopsRepository.findOne({
-      where: { id, is_verified: true },
+      where: { id },
     });
     if (!shop) {
       throw new NotFoundException(`Shop not found`);
