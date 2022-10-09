@@ -183,6 +183,7 @@ export class TransactionsService {
           id: shopId,
         },
       },
+      withDeleted: true,
       relations: ['shop', 'user', 'product'],
       order: {
         created_at: 'DESC',
