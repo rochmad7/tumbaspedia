@@ -66,6 +66,15 @@ export class TransactionsController {
           message: 'Transaksi berhasil ditemukan',
           data: transactions,
         };
+      } else if (req.user.role.id === ConstRole.SELLER) {
+        const transactions = await this.transactionsService.findAllByShopId(
+          +req.user.shop.id,
+        );
+
+        return {
+          message: 'Transaksi berhasil ditemukan',
+          data: transactions,
+        };
       } else {
         const transactions = await this.transactionsService.findAllByUserId(
           req.user.id,

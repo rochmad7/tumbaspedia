@@ -92,6 +92,18 @@ export class TransactionsService {
     });
   }
 
+  async findAllTransactionByShopId(userId: number): Promise<Transaction[]> {
+    return await this.transactionRepository.find({
+      where: {
+        user: {
+          id: userId,
+        },
+      },
+      withDeleted: true,
+      relations: ['shop', 'user', 'product'],
+    });
+  }
+
   async findOne(id: number, userId: number): Promise<Transaction> {
     return await this.transactionRepository.findOne({
       where: {
