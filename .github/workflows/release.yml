@@ -25,7 +25,6 @@ jobs:
           echo CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }} >> .env
           echo CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }} >> .env
           echo CLOUDINARY_FOLDER=${{ secrets.CLOUDINARY_FOLDER }} >> .env
-          
           echo MAIL_HOST=${{ secrets.MAIL_HOST }} >> .env
           echo MAIL_PORT=${{ secrets.MAIL_PORT }} >> .env
           echo MAIL_USERNAME_SHOP=${{ secrets.MAIL_USERNAME_SHOP }} >> .env
