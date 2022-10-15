@@ -97,11 +97,9 @@ export class AuthService {
     }
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      console.log('credentials match');
       const payload: JwtPayload = {
         user: { id: user.id, role_id: user.role.id },
       };
-      console.log('payload exists');
       const accessToken = this.jwtService.sign(payload);
       return { access_token: accessToken, user };
     } else {
