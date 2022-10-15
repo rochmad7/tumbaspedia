@@ -6,6 +6,7 @@ on:
 jobs:
   web-deploy:
     name: Deploy
+    environment: production
     runs-on: ubuntu-latest
     steps:
       - name: Get the latest code
