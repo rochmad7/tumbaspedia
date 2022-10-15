@@ -31,6 +31,10 @@ jobs:
           echo MAIL_USERNAME_SHOP=${{ secrets.MAIL_USERNAME_SHOP }} >> .env
           echo MAIL_PASSWORD_SHOP=${{ secrets.MAIL_PASSWORD_SHOP }} >> .env
           echo MAIL_FROM=${{ secrets.MAIL_FROM }} >> .env
+      - name: Installing project dependencies
+        run: npm install
+      - name: Building the project
+        run: npm run build
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
         with:
