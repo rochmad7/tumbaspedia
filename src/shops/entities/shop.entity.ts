@@ -40,6 +40,9 @@ export class Shop {
   nib: string;
 
   @Column()
+  nib_number: string;
+
+  @Column()
   opened_at: string;
 
   @Column()
