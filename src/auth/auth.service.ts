@@ -224,4 +224,10 @@ export class AuthService {
     }
     return user;
   }
+
+  async isNIBNumberAvailable(nib_number: string): Promise<boolean> {
+    const shop = await this.shopsService.findShopByNIBNumber(nib_number);
+
+    return !shop;
+  }
 }
