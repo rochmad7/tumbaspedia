@@ -233,13 +233,8 @@ export class ShopsService {
   }
 
   async findShopByNIBNumber(nib_number: string): Promise<Shop> {
-    const shop = await this.shopsRepository.findOne({
+    return await this.shopsRepository.findOne({
       where: { nib_number },
     });
-    if (!shop) {
-      throw new NotFoundException(`Shop not found`);
-    }
-
-    return shop;
   }
 }
