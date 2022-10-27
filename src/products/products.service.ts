@@ -112,7 +112,7 @@ export class ProductsService {
       sortBy = 'created_at';
     }
     sortBy == undefined || sortBy == 'random'
-      ? (sortBy = `random()`)
+      ? (sortBy = `rand()`)
       : (sortBy = `product.${sortBy}`);
 
     const productsResult = await this.productRepository
