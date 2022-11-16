@@ -1,4 +1,4 @@
-  import {
+import {
   forwardRef,
   Inject,
   Injectable,
@@ -138,7 +138,10 @@ export class ProductsService {
   }
 
   async findOne(id: number): Promise<Product> {
-    return await this.productRepository.findOne({ where: { id } });
+    return await this.productRepository.findOne({
+      where: { id },
+      relations: ['shop', 'category', 'shop.user'],
+    });
   }
 
   async update(

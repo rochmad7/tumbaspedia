@@ -115,6 +115,7 @@ export class ShopsService {
   async findOne(id: number): Promise<Shop> {
     const shop = await this.shopsRepository.findOne({
       where: { id },
+      relations: ['user'],
     });
     if (!shop) {
       throw new NotFoundException(`Shop not found`);
@@ -126,7 +127,10 @@ export class ShopsService {
   async findOneByUserID(id: number): Promise<Shop> {
     const user = await this.usersService.findOneById(id);
 
-    const shop = this.shopsRepository.findOne({ where: { user } });
+    const shop = this.shopsRepository.findOne({
+      where: { user },
+      relations: ['user'],
+    });
     if (!shop) {
       throw new NotFoundException(`Shop not found`);
     }
@@ -169,7 +173,10 @@ export class ShopsService {
       throw new NotFoundException(`Shop not found`);
     }
 
-    const shop = await this.shopsRepository.findOne({ where: { id } });
+    const shop = await this.shopsRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
 
     return await this.usersService.findOneById(shop.user.id);
   }
@@ -235,6 +242,7 @@ export class ShopsService {
   async findShopByNIBNumber(nib_number: string): Promise<Shop> {
     return await this.shopsRepository.findOne({
       where: { nib_number },
+      relations: ['user'],
     });
   }
 }

@@ -57,7 +57,7 @@ export class Shop {
   @DeleteDateColumn({ select: false })
   deleted_at: Date;
 
-  @OneToOne((type) => User, (user) => user.shop, { eager: true })
+  @OneToOne((type) => User, (user) => user.shop)
   @JoinColumn({ name: 'owner_id' })
   user: User;
 

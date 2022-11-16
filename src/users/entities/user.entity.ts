@@ -53,7 +53,7 @@ export class User {
   @DeleteDateColumn({ select: false })
   deleted_at: Date;
 
-  @ManyToOne((type) => Role, (role) => role.users, { eager: true })
+  @ManyToOne((type) => Role, (role) => role.users)
   @JoinColumn({ name: 'role' })
   role: Role;
 
