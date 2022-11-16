@@ -168,6 +168,7 @@ export class AuthController {
     @Body('shop_name') shopName: string,
     @Body('shop_address') shopAddress: string,
     @Body('shop_description') shopDescription: string,
+    @Body('shop_nib_number') shopNIBNumber: string,
     @UploadedFiles()
     files: {
       shop_picture?: Express.Multer.File[];
@@ -178,6 +179,20 @@ export class AuthController {
     registerShopDto.name = shopName;
     registerShopDto.address = shopAddress;
     registerShopDto.description = shopDescription;
+    registerShopDto.nib_number = shopNIBNumber;
+
+    const isNIBAvailable = await this.authService.isNIBNumberAvailable(
+      shopNIBNumber,
+    );
+    if (!isNIBAvailable) {
+      return {
+        message: 'NIB sudah digunakan',
+        errors: {
+          field: 'shop_nib_number',
+          message: 'NIB sudah digunakan',
+        },
+      };
+    }
 
     try {
       const registration = await this.authService.registerShop(

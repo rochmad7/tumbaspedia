@@ -24,7 +24,7 @@ import { MailModule } from './mail/mail.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
+        type: 'mysql',
         host: configService.get<string>('DB_HOST'),
         port: parseInt(configService.get<string>('DB_PORT')),
         username: configService.get<string>('DB_USERNAME'),

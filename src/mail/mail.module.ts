@@ -17,8 +17,8 @@ import { ConfigService } from '@nestjs/config';
           port: config.get('MAIL_PORT'),
           secure: true,
           auth: {
-            user: config.get('MAIL_USERNAME_SHOP'),
-            pass: config.get('MAIL_PASSWORD_SHOP'),
+            user: config.get('MAIL_USERNAME'),
+            pass: config.get('MAIL_PASSWORD'),
           },
           // logger: true,
           // debug: true,

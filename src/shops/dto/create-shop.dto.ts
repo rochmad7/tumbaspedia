@@ -25,4 +25,6 @@ export class CreateShopDto {
   updated_at: Date;
 
   deleted_at: Date;
+
+  nib_number: string;
 }

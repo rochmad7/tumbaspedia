@@ -6,6 +6,7 @@ on:
 jobs:
   web-deploy:
     name: Deploy
+    environment: production
     runs-on: ubuntu-latest
     steps:
       - name: Get the latest code
@@ -14,9 +15,9 @@ jobs:
       - name: create env file
         run: |
           touch .env
-          echo ENGINE_API_KEY=${{ secrets.ENGINE_API_KEY }} >> .env
           echo APP_URL=${{ secrets.APP_URL }} >> .env
-          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
+          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env          
+          echo JWT_EXPIRATION_TIME=${{ secrets.JWT_EXPIRATION_TIME }} >> .env
           echo DB_HOST=${{ secrets.DB_HOST }} >> .env
           echo DB_USERNAME=${{ secrets.DB_USERNAME }} >> .env
           echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
@@ -26,11 +27,10 @@ jobs:
           echo CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }} >> .env
           echo CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }} >> .env
           echo CLOUDINARY_FOLDER=${{ secrets.CLOUDINARY_FOLDER }} >> .env
-          
           echo MAIL_HOST=${{ secrets.MAIL_HOST }} >> .env
           echo MAIL_PORT=${{ secrets.MAIL_PORT }} >> .env
-          echo MAIL_USERNAME_SHOP=${{ secrets.MAIL_USERNAME_SHOP }} >> .env
-          echo MAIL_PASSWORD_SHOP=${{ secrets.MAIL_PASSWORD_SHOP }} >> .env
+          echo MAIL_USERNAME=${{ secrets.MAIL_USERNAME }} >> .env
+          echo MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} >> .env
           echo MAIL_FROM=${{ secrets.MAIL_FROM }} >> .env
       - name: Installing project dependencies
         run: npm install

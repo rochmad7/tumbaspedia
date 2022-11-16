@@ -40,6 +40,9 @@ export class TransactionsService {
     const product = await this.productsService.findOne(
       createTransactionDto.product_id,
     );
+    if (!product) {
+      throw new NotFoundException('Produk tidak ditemukan');
+    }
 
     if (product.shop.user.email === user.email) {
       throw new UnauthorizedException('Anda tidak bisa membeli produk sendiri');
@@ -88,7 +91,7 @@ export class TransactionsService {
         },
       },
       withDeleted: true,
-      relations: ['shop', 'user', 'product'],
+      relations: ['shop', 'user', 'product', 'shop.user'],
     });
   }
 
@@ -112,7 +115,7 @@ export class TransactionsService {
           id: userId,
         },
       },
-      relations: ['shop', 'user', 'product'],
+      relations: ['shop', 'user', 'product', 'shop.user'],
     });
   }
 
