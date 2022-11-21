@@ -130,10 +130,6 @@ export class ProductsService {
       .limit(limit)
       .getMany();
 
-    if (productsResult.length === 0) {
-      throw new NotFoundException('Products not found');
-    }
-
     return productsResult;
   }
 
