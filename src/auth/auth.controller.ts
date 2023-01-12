@@ -89,7 +89,10 @@ export class AuthController {
     @Body('confirm_password') confirmPassword: string,
   ) {
     if (newPassword !== confirmPassword) {
-      return 'Password tidak sama';
+      return 'Kata sandi tidak sama';
+    }
+    if (newPassword.length < 6) {
+      return 'Kata sandi minimal 6 karakter';
     }
 
     try {
