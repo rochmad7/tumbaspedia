@@ -66,10 +66,11 @@ export class AuthController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async sendResetPasswordEmail(
     @Body('email') email: string,
+    @Body('type') type: string,
   ): Promise<SuccessResponse | ErrorResponse> {
     try {
       const sendResetPasswordEmail =
-        await this.authService.sendResetPasswordEmail(email);
+        await this.authService.sendResetPasswordEmail(email, type);
       return {
         message: 'Email berhasil dikirim',
         data: sendResetPasswordEmail,
