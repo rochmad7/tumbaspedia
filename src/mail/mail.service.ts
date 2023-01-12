@@ -46,7 +46,7 @@ export class MailService {
     await this.mailerService.sendMail({
       to: email,
       // from: '"Support Team" <
-      subject: 'Reset Password',
+      subject: 'Reset Password Akun Tumbaspedia',
       template: './reset-password', // `.hbs` extension is appended automatically
       context: {
         // ✏️ filling curly brackets with content
@@ -58,7 +58,7 @@ export class MailService {
   async sendShopOrderNotification(transaction: Transaction) {
     await this.mailerService.sendMail({
       to: transaction.shop.user.email,
-      subject: 'Pesanan Baru',
+      subject: 'Pesanan Baru Transaksi #' + transaction.id,
       template: './shop-order-notification', // `.hbs` extension is appended automatically
       context: {
         // ✏️ filling curly brackets with content
