@@ -63,6 +63,12 @@ export class ProductsController {
         +query['shop'],
         +query['category'],
       );
+      if (products.length === 0) {
+        return {
+          message: 'Produk tidak ditemukan',
+          data: products,
+        };
+      }
       return {
         message: 'Produk berhasil ditemukan',
         data: products,

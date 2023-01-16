@@ -79,6 +79,9 @@ export class TransactionsService {
           status,
         }),
       },
+      order: {
+        created_at: 'DESC',
+      },
       withDeleted: true,
     });
   }
@@ -89,6 +92,9 @@ export class TransactionsService {
         user: {
           id: userId,
         },
+      },
+      order: {
+        created_at: 'DESC',
       },
       withDeleted: true,
       relations: ['shop', 'user', 'product', 'shop.user'],

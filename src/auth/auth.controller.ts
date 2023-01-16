@@ -66,10 +66,11 @@ export class AuthController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async sendResetPasswordEmail(
     @Body('email') email: string,
+    @Body('type') type: string,
   ): Promise<SuccessResponse | ErrorResponse> {
     try {
       const sendResetPasswordEmail =
-        await this.authService.sendResetPasswordEmail(email);
+        await this.authService.sendResetPasswordEmail(email, type);
       return {
         message: 'Email berhasil dikirim',
         data: sendResetPasswordEmail,
@@ -89,7 +90,10 @@ export class AuthController {
     @Body('confirm_password') confirmPassword: string,
   ) {
     if (newPassword !== confirmPassword) {
-      return 'Password tidak sama';
+      return 'Kata sandi tidak sama';
+    }
+    if (newPassword.length < 6) {
+      return 'Kata sandi minimal 6 karakter';
     }
 
     try {

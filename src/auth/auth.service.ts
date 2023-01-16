@@ -199,8 +199,12 @@ export class AuthService {
     return shop;
   }
 
-  async sendResetPasswordEmail(email: string): Promise<void> {
-    const user = await this.usersService.findOneByEmail(email, false);
+  async sendResetPasswordEmail(email: string, type: string): Promise<void> {
+    let roleID = ConstRole.BUYER;
+    if (type === 'seller') {
+      roleID = ConstRole.SELLER;
+    }
+    const user = await this.usersService.findOneByEmail(email, true, roleID);
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
