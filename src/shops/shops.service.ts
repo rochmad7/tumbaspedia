@@ -89,7 +89,7 @@ export class ShopsService {
         .where(whereQuery)
         .andWhere('shop.is_verified = true')
         .orderBy(`shop.id`, 'ASC')
-        .skip((page - 1) * 10)
+        .offset((page - 1) * 10)
         .limit(limit)
         .getMany();
 
@@ -104,7 +104,7 @@ export class ShopsService {
         .leftJoinAndSelect('shop.user', 'user')
         .where(whereQuery)
         .orderBy(`shop.id`, 'ASC')
-        .skip((page - 1) * 10)
+        .offset((page - 1) * 10)
         .limit(limit)
         .getMany();
     }

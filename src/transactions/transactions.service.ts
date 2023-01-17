@@ -173,7 +173,7 @@ export class TransactionsService {
       .groupBy('transaction.product_id')
       .orderBy('total', 'DESC')
       .limit(take)
-      .skip(skip)
+      .offset(skip)
       .getRawMany();
   }
 

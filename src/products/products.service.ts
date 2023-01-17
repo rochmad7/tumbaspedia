@@ -126,7 +126,7 @@ export class ProductsService {
       .leftJoinAndSelect('shop.user', 'user', 'user.id = shop.owner_id')
       .where(whereQuery)
       .orderBy(sortBy, sortType === 'asc' ? 'ASC' : 'DESC')
-      .skip((page - 1) * 10)
+      .offset((page - 1) * 10)
       .limit(limit)
       .getMany();
 
