@@ -196,6 +196,8 @@ export class AuthService {
       shop.is_verified = true;
     }
 
+    await this.mailService.sendAdminShopVerificationNotification(shop);
+
     return shop;
   }
 
