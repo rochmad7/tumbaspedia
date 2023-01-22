@@ -57,6 +57,22 @@ export class MailService {
     });
   }
 
+  async sendMailVerificationShop(shop: Shop) {
+    await this.mailerService.sendMail({
+      to: shop.user.email,
+      subject: 'Toko ' + shop.name + 'Milik Anda Telah Terverifikasi',
+      template: './shop-verified', // `.hbs` extension is appended automatically
+      context: {
+        // ✏️ filling curly brackets with content
+        shopName: shop.name,
+        shopDescription: shop.description,
+        shopUserPhoneNumber: shop.user.phone_number,
+        shopAddress: shop.address,
+        shopUserName: shop.user.name,
+      },
+    });
+  }
+
   async sendPasswordReset(email, token: string) {
     const url = `${process.env.APP_URL}/reset-password/${token}`;
 

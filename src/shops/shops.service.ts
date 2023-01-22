@@ -236,6 +236,9 @@ export class ShopsService {
     }
 
     shop.is_verified = true;
+
+    await this.mailService.sendMailVerificationShop(shop);
+
     return shop;
   }
 
