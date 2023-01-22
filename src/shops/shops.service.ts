@@ -66,6 +66,7 @@ export class ShopsService {
     limit: number,
     page: number,
     isVerified: boolean,
+    sortType: string,
   ): Promise<Shop[]> {
     if (isNaN(page) || page === 0) {
       page = 1;
@@ -79,6 +80,9 @@ export class ShopsService {
     if (search) {
       whereQuery = `shop.name LIKE '%${search}%'`;
     }
+    if (sortBy === 'date') {
+      sortBy = 'shop.created_at';
+    }
 
     let shops: Shop[];
     if (isVerified) {
@@ -88,7 +92,7 @@ export class ShopsService {
         .leftJoinAndSelect('user.role', 'role')
         .where(whereQuery)
         .andWhere('shop.is_verified = true')
-        .orderBy(`shop.id`, 'ASC')
+        .orderBy(sortBy, sortType === 'asc' ? 'ASC' : 'DESC')
         .offset((page - 1) * 10)
         .limit(limit)
         .getMany();
@@ -103,7 +107,7 @@ export class ShopsService {
         .createQueryBuilder('shop')
         .leftJoinAndSelect('shop.user', 'user')
         .where(whereQuery)
-        .orderBy(`shop.id`, 'ASC')
+        .orderBy(sortBy, sortType === 'asc' ? 'ASC' : 'DESC')
         .offset((page - 1) * 10)
         .limit(limit)
         .getMany();
