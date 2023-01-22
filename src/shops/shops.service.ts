@@ -68,7 +68,6 @@ export class ShopsService {
     isVerified: boolean,
     sortType: string,
   ): Promise<Shop[]> {
-
     let whereQuery = '';
 
     if (search) {
@@ -217,7 +216,10 @@ export class ShopsService {
   }
 
   async verifyShop(id: number, isVerified: boolean): Promise<Shop> {
-    const shop = await this.shopsRepository.findOne({ where: { id } });
+    const shop = await this.shopsRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
     if (!shop) {
       throw new NotFoundException(`Shop not found`);
     }
@@ -229,9 +231,10 @@ export class ShopsService {
       throw new NotFoundException(`Shop not found`);
     }
 
-    shop.is_verified = true;
-
-    await this.mailService.sendMailVerificationShop(shop);
+    if (isVerified) {
+      shop.is_verified = true;
+      await this.mailService.sendMailVerificationShop(shop);
+    }
 
     return shop;
   }
