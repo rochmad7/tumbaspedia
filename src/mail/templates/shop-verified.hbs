@@ -106,8 +106,7 @@
                           style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 24px;">
                           <img width="60"
                                src="https://res.cloudinary.com/rochmad7/image/upload/v1660786671/skripsi-marketplace/tumbaspedia_logo_exipsr.png"
-                               title="logo" alt="logo">
-                        </td>
+                               title="logo" alt="logo"></td>
                       </tr>
                     </table>
                   </td>
@@ -124,9 +123,9 @@
                 <td align="center"
                     style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding-top: 25px;">
                   <img src="https://img.icons8.com/carbon-copy/100/000000/checked-checkbox.png" width="125" height="120"
-                       style="display: block; border: 0px;" /><br>
+                       alt="" /><br>
                   <h2 style="font-size: 30px; font-weight: 800; line-height: 36px; color: #333333; margin: 0;">
-                    Terdapat pesanan masuk di toko {{shopName}}!
+                    Selamat, Toko Anda telah Terverifikasi</h2>
                   </h2>
                 </td>
               </tr>
@@ -134,7 +133,7 @@
                 <td align="left"
                     style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding-top: 10px;">
                   <p style="font-size: 16px; font-weight: 400; line-height: 24px; color: #777777;">
-                    Berikut ini adalah detail pesanan pembeli:
+                    Berikut ini adalah detail toko Anda :
                   </p>
                 </td>
               </tr>
@@ -142,84 +141,70 @@
                 <td align="left" style="padding-top: 20px;">
                   <table cellspacing="0" cellpadding="0" border="0" width="100%">
                     <tr>
-                      <td width="75%" align="left" bgcolor="#eeeeee"
-                          style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px;">
-                        Produk
+                      <td width="75%" align="left"
+                          style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 15px 10px 5px 10px;">
+                        Nama Toko
                       </td>
-                      <td width="25%" align="left" bgcolor="#eeeeee"
-                          style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px;">
-                        Harga
+                      <td width="25%" align="left"
+                          style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 15px 10px 5px 10px;">
+                        {{shopName}}
                       </td>
                     </tr>
                     <tr>
                       <td width="75%" align="left"
                           style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 15px 10px 5px 10px;">
-                        {{productName}} x {{quantity}} item
+                        Alamat
                       </td>
                       <td width="25%" align="left"
                           style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 15px 10px 5px 10px;">
-                        {{productPrice}}
+                        {{shopAddress}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td width="75%" align="left"
+                          style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 15px 10px 5px 10px;">
+                        Deskripsi
+                      </td>
+                      <td width="25%" align="left"
+                          style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 15px 10px 5px 10px;">
+                        {{shopDescription}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td width="75%" align="left"
+                          style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 15px 10px 5px 10px;">
+                        Nama Penjual
+                      </td>
+                      <td width="25%" align="left"
+                          style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 15px 10px 5px 10px;">
+                        {{shopUserName}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td width="75%" align="left"
+                          style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 15px 10px 5px 10px;">
+                        No HP Penjual
+                      </td>
+                      <td width="25%" align="left"
+                          style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 15px 10px 5px 10px;">
+                        {{shopUserPhoneNumber}}
                       </td>
                     </tr>
                   </table>
                 </td>
               </tr>
               <tr>
-                <td align="left" style="padding-top: 20px;">
-                  <table cellspacing="0" cellpadding="0" border="0" width="100%">
-                    <tr>
-                      <td width="75%" align="left"
-                          style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;">
-                        TOTAL
-                      </td>
-                      <td width="25%" align="left"
-                          style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;">
-                        {{totalPrice}}
-                      </td>
-                    </tr>
-                  </table>
+                <td align="center"
+                    style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding-top: 25px;">
+                  <img src="https://img.icons8.com/carbon-copy/100/000000/checked-checkbox.png" width="125" height="120"
+                       alt="" /><br>
+                  <h2 style="font-size: 30px; font-weight: 800; line-height: 36px; color: #333333; margin: 0;">
+                    Silahkan masuk ke aplikasi Tumbaspedia Seller untuk melihat detail toko Anda</h2>
+                  </h2>
                 </td>
               </tr>
             </table>
 
-          </td>
-        </tr>
-        <tr>
-          <td align="center" height="100%" valign="top" width="100%"
-              style="padding: 0 35px 35px 35px; background-color: #ffffff;" bgcolor="#ffffff">
-            <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:660px;">
-              <tr>
-                <td align="center" valign="top" style="font-size:0;">
-                  <div style="display:inline-block; max-width:50%; min-width:240px; vertical-align:top; width:100%;">
-
-                    <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%"
-                           style="max-width:300px;">
-                      <tr>
-                        <td align="left" valign="top"
-                            style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px;">
-                          <p style="font-weight: 800;">Alamat Pengiriman</p>
-                          <p>{{userAddress}}</p>
-
-                        </td>
-                      </tr>
-                    </table>
-                  </div>
-                  <div style="display:inline-block; max-width:50%; min-width:240px; vertical-align:top; width:100%;">
-                    <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%"
-                           style="max-width:300px;">
-                      <tr>
-                        <td align="left" valign="top"
-                            style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px;">
-                          <p style="font-weight: 800;">Identitas Pembeli</p>
-                          <p>{{userName}}</p>
-                          <p>{{userPhoneNumber}}</p>
-                        </td>
-                      </tr>
-                    </table>
-                  </div>
-                </td>
-              </tr>
-            </table>
           </td>
         </tr>
         <tr>

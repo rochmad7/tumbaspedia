@@ -66,18 +66,15 @@ export class ShopsService {
     limit: number,
     page: number,
     isVerified: boolean,
+    sortType: string,
   ): Promise<Shop[]> {
-    if (isNaN(page) || page === 0) {
-      page = 1;
-    }
-    if (isNaN(limit)) {
-      limit = 10;
-    }
-
     let whereQuery = '';
 
     if (search) {
       whereQuery = `shop.name LIKE '%${search}%'`;
+    }
+    if (sortBy === 'date') {
+      sortBy = 'shop.created_at';
     }
 
     let shops: Shop[];
@@ -88,9 +85,7 @@ export class ShopsService {
         .leftJoinAndSelect('user.role', 'role')
         .where(whereQuery)
         .andWhere('shop.is_verified = true')
-        .orderBy(`shop.id`, 'ASC')
-        .skip((page - 1) * 10)
-        .limit(limit)
+        .orderBy(sortBy, sortType === 'asc' ? 'ASC' : 'DESC')
         .getMany();
 
       for (const shop of shops) {
@@ -103,9 +98,7 @@ export class ShopsService {
         .createQueryBuilder('shop')
         .leftJoinAndSelect('shop.user', 'user')
         .where(whereQuery)
-        .orderBy(`shop.id`, 'ASC')
-        .skip((page - 1) * 10)
-        .limit(limit)
+        .orderBy(sortBy, sortType === 'asc' ? 'ASC' : 'DESC')
         .getMany();
     }
 
@@ -223,7 +216,10 @@ export class ShopsService {
   }
 
   async verifyShop(id: number, isVerified: boolean): Promise<Shop> {
-    const shop = await this.shopsRepository.findOne({ where: { id } });
+    const shop = await this.shopsRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
     if (!shop) {
       throw new NotFoundException(`Shop not found`);
     }
@@ -235,7 +231,11 @@ export class ShopsService {
       throw new NotFoundException(`Shop not found`);
     }
 
-    shop.is_verified = true;
+    if (isVerified) {
+      shop.is_verified = true;
+      await this.mailService.sendMailVerificationShop(shop);
+    }
+
     return shop;
   }
 

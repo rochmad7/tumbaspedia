@@ -116,6 +116,7 @@ export class ShopsController {
         query['limit'],
         query['page'],
         isVerified,
+        query['sort_type'],
       );
       return {
         message: 'Berhasil mengambil semua toko',

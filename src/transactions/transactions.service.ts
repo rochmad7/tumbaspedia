@@ -64,6 +64,7 @@ export class TransactionsService {
     const transactionSave = await this.transactionRepository.save(transaction);
 
     await this.mailService.sendShopOrderNotification(transaction);
+    await this.mailService.sendUserOrderNotification(transaction);
 
     return transactionSave;
   }
@@ -173,7 +174,7 @@ export class TransactionsService {
       .groupBy('transaction.product_id')
       .orderBy('total', 'DESC')
       .limit(take)
-      .skip(skip)
+      .offset(skip)
       .getRawMany();
   }
 

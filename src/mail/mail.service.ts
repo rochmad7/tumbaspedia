@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { User } from '../users/entities/user.entity';
 import { Product } from '../products/entities/product.entity';
 import { Transaction } from '../transactions/entities/transaction.entity';
+import { Shop } from '../shops/entities/shop.entity';
 
 @Injectable()
 export class MailService {
@@ -40,6 +41,38 @@ export class MailService {
     });
   }
 
+  async sendAdminShopVerificationNotification(shop: Shop) {
+    await this.mailerService.sendMail({
+      to: process.env.ADMIN_EMAIL,
+      subject: 'Verifikasi Toko Baru #' + shop.id + ' - ' + shop.name,
+      template: './admin-shop-verification-notification', // `.hbs` extension is appended automatically
+      context: {
+        // ✏️ filling curly brackets with content
+        shopName: shop.name,
+        shopDescription: shop.description,
+        shopUserPhoneNumber: shop.user.phone_number,
+        shopAddress: shop.address,
+        shopUserName: shop.user.name,
+      },
+    });
+  }
+
+  async sendMailVerificationShop(shop: Shop) {
+    await this.mailerService.sendMail({
+      to: shop.user.email,
+      subject: 'Toko ' + shop.name + 'Milik Anda Telah Terverifikasi',
+      template: './shop-verified', // `.hbs` extension is appended automatically
+      context: {
+        // ✏️ filling curly brackets with content
+        shopName: shop.name,
+        shopDescription: shop.description,
+        shopUserPhoneNumber: shop.user.phone_number,
+        shopAddress: shop.address,
+        shopUserName: shop.user.name,
+      },
+    });
+  }
+
   async sendPasswordReset(email, token: string) {
     const url = `${process.env.APP_URL}/reset-password/${token}`;
 
@@ -70,6 +103,22 @@ export class MailService {
         userAddress: transaction.user.address,
         userName: transaction.user.name,
         userPhoneNumber: transaction.user.phone_number,
+      },
+    });
+  }
+
+  async sendUserOrderNotification(transaction: Transaction) {
+    await this.mailerService.sendMail({
+      to: transaction.user.email,
+      subject: 'Pesanan Baru Transaksi #' + transaction.id,
+      template: './user-order-notification', // `.hbs` extension is appended automatically
+      context: {
+        // ✏️ filling curly brackets with content
+        shopName: transaction.shop.name,
+        productName: transaction.product.name,
+        quantity: transaction.quantity,
+        productPrice: transaction.product.price,
+        totalPrice: transaction.total,
       },
     });
   }
