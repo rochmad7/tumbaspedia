@@ -68,6 +68,13 @@ export class ShopsService {
     isVerified: boolean,
     sortType: string,
   ): Promise<Shop[]> {
+    if (isNaN(page) || page === 0) {
+      page = 1;
+    }
+    if (isNaN(limit)) {
+      limit = 10;
+    }
+
     let whereQuery = '';
 
     if (search) {
@@ -86,6 +93,8 @@ export class ShopsService {
         .where(whereQuery)
         .andWhere('shop.is_verified = true')
         .orderBy(sortBy, sortType === 'asc' ? 'ASC' : 'DESC')
+        .offset((page - 1) * limit)
+        .limit(limit)
         .getMany();
 
       for (const shop of shops) {
