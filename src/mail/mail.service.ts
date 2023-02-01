@@ -14,7 +14,7 @@ export class MailService {
 
     await this.mailerService.sendMail({
       to: email,
-      // from: '"Support Team" <support@example.com>', // override default from
+      from: '"Tumbaspedia" <no-reply@tumbaspedia.my.id>', // override default from
       subject: 'Selamat Datang di Tumbaspedia!',
       template: './confirmation', // `.hbs` extension is appended automatically
       context: {
@@ -30,7 +30,7 @@ export class MailService {
 
     await this.mailerService.sendMail({
       to: email,
-      // from: '"Support Team" <support@example.com>', // override default from
+      from: '"Tumbaspedia" <no-reply@tumbaspedia.my.id>', // override default from
       subject: 'Selamat Datang di Tumbaspedia Seller!',
       template: './confirmation', // `.hbs` extension is appended automatically
       context: {
@@ -44,6 +44,7 @@ export class MailService {
   async sendAdminShopVerificationNotification(shop: Shop) {
     await this.mailerService.sendMail({
       to: process.env.ADMIN_EMAIL,
+      from: '"Tumbaspedia" <no-reply@tumbaspedia.my.id>', // override default from
       subject: 'Verifikasi Toko Baru #' + shop.id + ' - ' + shop.name,
       template: './admin-shop-verification-notification', // `.hbs` extension is appended automatically
       context: {
@@ -60,6 +61,7 @@ export class MailService {
   async sendMailVerificationShop(shop: Shop) {
     await this.mailerService.sendMail({
       to: shop.user.email,
+      from: '"Tumbaspedia" <no-reply@tumbaspedia.my.id>', // override default from
       subject: 'Toko ' + shop.name + ' Anda Telah Terverifikasi',
       template: './shop-verified', // `.hbs` extension is appended automatically
       context: {
@@ -78,7 +80,7 @@ export class MailService {
 
     await this.mailerService.sendMail({
       to: email,
-      // from: '"Support Team" <
+      from: '"Tumbaspedia" <no-reply@tumbaspedia.my.id>', // override default from
       subject: 'Reset Password Akun Tumbaspedia',
       template: './reset-password', // `.hbs` extension is appended automatically
       context: {
@@ -91,6 +93,7 @@ export class MailService {
   async sendShopOrderNotification(transaction: Transaction) {
     await this.mailerService.sendMail({
       to: transaction.shop.user.email,
+      from: '"Tumbaspedia" <no-reply@tumbaspedia.my.id>', // override default from
       subject: 'Pesanan Baru Transaksi #' + transaction.id,
       template: './shop-order-notification', // `.hbs` extension is appended automatically
       context: {
@@ -110,6 +113,7 @@ export class MailService {
   async sendUserOrderNotification(transaction: Transaction) {
     await this.mailerService.sendMail({
       to: transaction.user.email,
+      from: '"Tumbaspedia" <no-reply@tumbaspedia.my.id>', // override default from
       subject: 'Pesanan Baru Transaksi #' + transaction.id,
       template: './user-order-notification', // `.hbs` extension is appended automatically
       context: {
