@@ -90,17 +90,17 @@ export class AuthController {
     @Body('confirm_password') confirmPassword: string,
   ) {
     if (newPassword !== confirmPassword) {
-      return 'Kata sandi tidak sama';
+      return 'Kata sandi tidak sama. Silahkan coba lagi';
     }
     if (newPassword.length < 6) {
-      return 'Kata sandi minimal 6 karakter';
+      return 'Kata sandi minimal 6 karakter. Silahkan coba lagi';
     }
 
     try {
       await this.authService.resetPassword(token, newPassword);
-      return `<h1>Password berhasil diubah</h1>`;
+      return `<h1>Kata sandi berhasil diubah</h1>`;
     } catch (error) {
-      return `<h1>Gagal mengubah password</h1>`;
+      return `<h1>Terjadi kesalahan saat mengubah kata sandi</h1>`;
     }
   }
 
