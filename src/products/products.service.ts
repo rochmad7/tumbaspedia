@@ -85,10 +85,10 @@ export class ProductsService {
     if (categoryId == -1) {
       categoryId = null;
     }
-    let whereQuery = 'shop.is_verified = true AND';
+    let whereQuery = 'shop.is_verified = true';
 
     if (search) {
-      whereQuery = `LOWER(product.name) LIKE '%${search.toLowerCase()}%'`;
+      whereQuery = ` AND LOWER(product.name) LIKE '%${search.toLowerCase()}%'`;
       if (shopId) {
         if (categoryId) {
           whereQuery += ` AND product.category_id = ${categoryId}`;
@@ -100,11 +100,11 @@ export class ProductsService {
     } else {
       if (shopId) {
         if (categoryId) {
-          whereQuery += `product.category_id = ${categoryId} AND`;
+          whereQuery += `AND product.category_id = ${categoryId} AND`;
         }
-        whereQuery += ` product.shop_id = ${shopId}`;
+        whereQuery += ` AND product.shop_id = ${shopId}`;
       } else if (categoryId) {
-        whereQuery += ` product.category_id = ${categoryId}`;
+        whereQuery += ` AND product.category_id = ${categoryId}`;
       }
     }
 
