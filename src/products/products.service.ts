@@ -85,7 +85,7 @@ export class ProductsService {
     if (categoryId == -1) {
       categoryId = null;
     }
-    let whereQuery = '';
+    let whereQuery = 'shop.is_verified = true';
 
     if (search) {
       whereQuery = `LOWER(product.name) LIKE '%${search.toLowerCase()}%'`;
