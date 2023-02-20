@@ -33,9 +33,6 @@ jobs:
           echo MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} >> .env
           echo MAIL_FROM=${{ secrets.MAIL_FROM }} >> .env
           echo ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }} >> .env
-          echo DEV_SITE_SERVER=${{ secrets.DEV_SITE_SERVER }} >> .env
-          echo DEV_SITE_USER=${{ secrets.DEV_SITE_USER }} >> .env
-          echo DEV_SITE_PASS=${{ secrets.DEV_SITE_PASS }} >> .env
       - name: Installing project dependencies
         run: npm install
       - name: Building the project
