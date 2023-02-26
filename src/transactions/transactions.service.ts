@@ -122,7 +122,7 @@ export class TransactionsService {
           id: userId,
         },
       },
-      relations: ['shop', 'user', 'product', 'shop.user'],
+      relations: ['shop', 'user', 'product', 'shop.user', 'product.category'],
     });
   }
 
