@@ -71,7 +71,7 @@ export class TransactionsService {
 
   async findAll(search: number, status: string): Promise<Transaction[]> {
     return await this.transactionRepository.find({
-      relations: ['shop', 'user', 'product'],
+      relations: ['shop', 'user', 'product', 'product.category'],
       where: {
         ...(search && {
           id: search,
@@ -98,7 +98,7 @@ export class TransactionsService {
         created_at: 'DESC',
       },
       withDeleted: true,
-      relations: ['shop', 'user', 'product', 'shop.user'],
+      relations: ['shop', 'user', 'product', 'shop.user', 'product.category'],
     });
   }
 
