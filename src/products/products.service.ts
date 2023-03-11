@@ -100,7 +100,7 @@ export class ProductsService {
     } else {
       if (shopId) {
         if (categoryId) {
-          whereQuery += `AND product.category_id = ${categoryId} AND`;
+          whereQuery += ` AND product.category_id = ${categoryId}`;
         }
         whereQuery += ` AND product.shop_id = ${shopId}`;
       } else if (categoryId) {
