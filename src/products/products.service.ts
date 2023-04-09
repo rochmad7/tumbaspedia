@@ -85,7 +85,7 @@ export class ProductsService {
     if (categoryId == -1) {
       categoryId = null;
     }
-    let whereQuery = 'shop.is_verified = true';
+    let whereQuery = 'shop.is_verified = true AND product.stock > 0';
 
     if (search) {
       whereQuery = ` AND LOWER(product.name) LIKE '%${search.toLowerCase()}%'`;
@@ -100,7 +100,7 @@ export class ProductsService {
     } else {
       if (shopId) {
         if (categoryId) {
-          whereQuery += `AND product.category_id = ${categoryId} AND`;
+          whereQuery += ` AND product.category_id = ${categoryId}`;
         }
         whereQuery += ` AND product.shop_id = ${shopId}`;
       } else if (categoryId) {
