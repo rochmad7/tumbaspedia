@@ -211,9 +211,14 @@ export class AuthService {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
-    const token = this.jwtService.sign({
-      email: user.email,
-    });
+    const token = this.jwtService.sign(
+      {
+        email: user.email,
+      },
+      {
+        expiresIn: '1h',
+      },
+    );
 
     await this.mailService.sendPasswordReset(user.email, token);
   }

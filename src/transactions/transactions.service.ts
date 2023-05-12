@@ -63,8 +63,12 @@ export class TransactionsService {
 
     const transactionSave = await this.transactionRepository.save(transaction);
 
-    await this.mailService.sendShopOrderNotification(transaction);
-    await this.mailService.sendUserOrderNotification(transaction);
+    try {
+      await this.mailService.sendShopOrderNotification(transaction);
+      await this.mailService.sendUserOrderNotification(transaction);
+    } catch (error) {
+      console.log(error);
+    }
 
     return transactionSave;
   }

@@ -6,7 +6,6 @@ import {
   HttpStatus,
   Param,
   Post,
-  UploadedFile,
   UploadedFiles,
   UseInterceptors,
   UsePipes,
@@ -18,6 +17,7 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import { ErrorResponse, SuccessResponse } from '../app.service';
 import { RegisterShopDto } from './dto/register-shop.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { QueryFailedError } from "typeorm";
 
 @Controller('auth')
 export class AuthController {
@@ -46,7 +46,7 @@ export class AuthController {
   async confirmShop(@Param('token') token: string) {
     try {
       const confirm = await this.authService.confirmShop(token);
-      return `<h1>Berhasil konfirmasi akun seller ${confirm.name}</h1>`;
+      return `<h1>Berhasil konfirmasi akun seller ${confirm.name}, silahkan login kembali di aplikasi</h1>`;
     } catch (error) {
       return '<h1>Gagal konfirmasi akun seller</h1>';
     }
@@ -56,7 +56,7 @@ export class AuthController {
   async confirmUser(@Param('token') token: string) {
     try {
       const confirm = await this.authService.confirmUser(token);
-      return `<h1>Berhasil konfirmasi akun ${confirm.name}</h1>`;
+      return `<h1>Berhasil konfirmasi akun ${confirm.name}, silahkan login kembali di aplikasi</h1>`;
     } catch (error) {
       return `<h1>Gagal konfirmasi akun</h1>`;
     }
@@ -72,7 +72,7 @@ export class AuthController {
       const sendResetPasswordEmail =
         await this.authService.sendResetPasswordEmail(email, type);
       return {
-        message: 'Email berhasil dikirim',
+        message: 'Email berhasil dikirim, silahkan cek email anda',
         data: sendResetPasswordEmail,
       };
     } catch (error) {

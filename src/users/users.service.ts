@@ -50,8 +50,8 @@ export class UsersService {
 
       return user;
     } catch (error) {
-      // duplicate by postgres
-      if (error.code === '23505') {
+      // duplicate by email in mysql
+      if (error.code === 'ER_DUP_ENTRY') {
         throw new ConflictException('Email sudah terdaftar');
       } else {
         throw new Error(error);
