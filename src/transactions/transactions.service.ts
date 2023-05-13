@@ -134,6 +134,8 @@ export class TransactionsService {
     id: number,
     updateTransactionDto: UpdateTransactionDto,
   ): Promise<Transaction> {
+    const transaction = await this.findOne(id, updateTransactionDto.user_id);
+
     if (updateTransactionDto.status === 'delivered') {
       const updateTransaction = await this.transactionRepository.update(id, {
         status: updateTransactionDto.status,
@@ -143,13 +145,20 @@ export class TransactionsService {
         throw new NotFoundException('Transaction not found');
       }
 
-      const transaction = await this.findOne(id, updateTransactionDto.user_id);
       await this.productsService.updateSold(
         transaction.product.id,
         transaction.quantity,
       );
 
       return transaction;
+    } else if (updateTransactionDto.status === 'canceled') {
+      const product = await this.productsService.findOne(
+        transaction.product.id,
+      );
+
+      await this.productsService.update(product.id, {
+        stock: product.stock + transaction.quantity,
+      });
     }
 
     const updateTransaction = await this.transactionRepository.update(
