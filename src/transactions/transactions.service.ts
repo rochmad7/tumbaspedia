@@ -151,14 +151,6 @@ export class TransactionsService {
       );
 
       return transaction;
-    } else if (updateTransactionDto.status === 'canceled') {
-      const product = await this.productsService.findOne(
-        transaction.product.id,
-      );
-
-      await this.productsService.update(product.id, {
-        stock: product.stock + transaction.quantity,
-      });
     }
 
     const updateTransaction = await this.transactionRepository.update(
@@ -167,6 +159,16 @@ export class TransactionsService {
     );
     if (updateTransaction.affected === 0) {
       throw new NotFoundException('Transaction not found');
+    }
+
+    if (updateTransactionDto.status === 'canceled') {
+      const product = await this.productsService.findOne(
+        transaction.product.id,
+      );
+
+      await this.productsService.update(product.id, {
+        stock: product.stock + transaction.quantity,
+      });
     }
 
     return await this.findOne(id, updateTransactionDto.user_id);
