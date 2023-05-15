@@ -75,6 +75,7 @@ export class ProductsService {
     limit: number,
     shopId: number,
     categoryId: number,
+    userRole: string,
   ): Promise<Product[]> {
     if (isNaN(page) || page === 0) {
       page = 1;
@@ -86,6 +87,10 @@ export class ProductsService {
       categoryId = null;
     }
     let whereQuery = 'shop.is_verified = true AND product.stock > 0';
+
+    if (userRole == 'seller' || userRole == 'admin') {
+      whereQuery = 'shop.is_verified = true';
+    }
 
     if (search) {
       whereQuery += ` AND LOWER(product.name) LIKE '%${search.toLowerCase()}%'`;

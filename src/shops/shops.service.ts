@@ -81,8 +81,12 @@ export class ShopsService {
       whereQuery = `shop.name LIKE '%${search}%'`;
     }
     if (sortBy === 'date') {
-      sortBy = 'shop.created_at';
+      sortBy = 'created_at';
     }
+
+    sortBy == undefined || sortBy == 'random'
+      ? (sortBy = `rand()`)
+      : (sortBy = `shop.${sortBy}`);
 
     let shops: Shop[];
     if (isVerified) {
@@ -207,6 +211,7 @@ export class ShopsService {
       limit,
       shopId,
       categoryId,
+      'seller',
     );
     if (!productShop) {
       throw new NotFoundException(`Products not found`);

@@ -62,6 +62,7 @@ export class ProductsController {
         +query['limit'],
         +query['shop'],
         +query['category'],
+        query['userRole'],
       );
       if (products.length === 0) {
         return {
