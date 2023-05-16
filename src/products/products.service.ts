@@ -9,14 +9,14 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { ShopsService } from '../shops/shops.service';
 import { CategoriesService } from '../categories/categories.service';
 import { UsersService } from '../users/users.service';
 import { CLOUDINARY_FOLDER_PRODUCT } from '../constants';
-import { TransactionsService } from '../transactions/transactions.service';
 import { Category } from '../categories/entities/category.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class ProductsService {
@@ -76,6 +76,7 @@ export class ProductsService {
     shopId: number,
     categoryId: number,
     userRole: string,
+    excludeIds: number[],
   ): Promise<Product[]> {
     if (isNaN(page) || page === 0) {
       page = 1;
@@ -90,6 +91,10 @@ export class ProductsService {
 
     if (userRole == 'seller' || userRole == 'admin') {
       whereQuery = 'shop.is_verified = true';
+    }
+
+    if (excludeIds.length > 0) {
+      whereQuery += ` AND product.id NOT IN (${excludeIds.join(',')})`;
     }
 
     if (search) {
@@ -120,7 +125,7 @@ export class ProductsService {
       ? (sortBy = `rand()`)
       : (sortBy = `product.${sortBy}`);
 
-    const productsResult = await this.productRepository
+    return await this.productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.shop', 'shop', 'shop.id = product.shop_id')
       .leftJoinAndSelect(
@@ -131,11 +136,9 @@ export class ProductsService {
       .leftJoinAndSelect('shop.user', 'user', 'user.id = shop.owner_id')
       .where(whereQuery)
       .orderBy(sortBy, sortType === 'asc' ? 'ASC' : 'DESC')
-      .offset((page - 1) * 10)
+      .offset((page - 1) * limit)
       .limit(limit)
       .getMany();
-
-    return productsResult;
   }
 
   async findOne(id: number): Promise<Product> {

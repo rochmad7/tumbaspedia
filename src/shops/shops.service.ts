@@ -212,6 +212,7 @@ export class ShopsService {
       shopId,
       categoryId,
       'seller',
+      [],
     );
     if (!productShop) {
       throw new NotFoundException(`Products not found`);

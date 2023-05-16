@@ -63,6 +63,7 @@ export class ProductsController {
         +query['shop'],
         +query['category'],
         query['userRole'],
+        query['excludeIds'] ? query['excludeIds'].split(',') : [],
       );
       if (products.length === 0) {
         return {
