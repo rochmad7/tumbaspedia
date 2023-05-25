@@ -7,7 +7,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository, UpdateResult } from 'typeorm';
+import { Between, Repository, UpdateResult } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { Role } from '../roles/entities/role.entity';
@@ -207,9 +207,17 @@ export class UsersService {
     return user;
   }
 
-  async countUsers(): Promise<{ shops_count; buyers_count }> {
+  async countUsers(date: Date): Promise<{
+    total_shops_count;
+    total_buyers_count;
+    monthly_shops_count;
+    monthly_buyers_count;
+  }> {
     const sellerRole = await this.rolesService.findOne(ConstRole.SELLER);
     const buyerRole = await this.rolesService.findOne(ConstRole.BUYER);
+
+    const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
 
     const shopCount = await this.userRepository.count({
       where: { role: sellerRole },
@@ -219,6 +227,29 @@ export class UsersService {
       where: { role: buyerRole },
     });
 
-    return { shops_count: shopCount, buyers_count: buyerCount };
+    const monthlyShopCount = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.role = :role', { role: sellerRole.id })
+      .andWhere('user.created_at BETWEEN :firstDay AND :lastDay', {
+        firstDay: firstDayOfMonth,
+        lastDay: lastDayOfMonth,
+      })
+      .getCount();
+
+    const monthlyBuyerCount = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.role = :role', { role: buyerRole.id })
+      .andWhere('user.created_at BETWEEN :firstDay AND :lastDay', {
+        firstDay: firstDayOfMonth,
+        lastDay: lastDayOfMonth,
+      })
+      .getCount();
+
+    return {
+      total_shops_count: shopCount,
+      total_buyers_count: buyerCount,
+      monthly_shops_count: monthlyShopCount,
+      monthly_buyers_count: monthlyBuyerCount,
+    };
   }
 }

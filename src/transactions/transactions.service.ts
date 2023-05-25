@@ -307,4 +307,41 @@ export class TransactionsService {
 
     return total;
   }
+
+  async totalAllTransactionsPerYear(date: Date): Promise<number> {
+    let total = 0;
+
+    const lastDayOfYear = new Date(date.getFullYear(), 12, 0);
+    const firstDayOfYear = new Date(date.getFullYear(), 1, 1);
+    const yearSum = await this.transactionRepository
+      .createQueryBuilder('transaction')
+      .select('SUM(transaction.total)', 'total')
+      .where('created_at >= :after', {
+        after: firstDayOfYear,
+      })
+      .andWhere('created_at < :before', {
+        before: lastDayOfYear,
+      })
+      .getRawMany();
+
+    yearSum.forEach((element) => {
+      total += +element.total;
+    });
+
+    return total;
+  }
+
+  async countAllTransactionsPerYear(date: Date): Promise<number> {
+    const lastDayOfYear = new Date(date.getFullYear(), 12, 0);
+    const firstDayOfYear = new Date(date.getFullYear(), 1, 1);
+    return await this.transactionRepository
+      .createQueryBuilder('transaction')
+      .where('created_at >= :after', {
+        after: firstDayOfYear,
+      })
+      .andWhere('created_at < :before', {
+        before: lastDayOfYear,
+      })
+      .getCount();
+  }
 }

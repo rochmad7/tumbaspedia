@@ -35,27 +35,51 @@ export class AdministratorsService {
     };
   }
 
-  async findAllUsersCount(): Promise<{ shops_count; buyers_count }> {
-    const usersCount = await this.usersService.countUsers();
+  async findUsersReport(date: Date): Promise<{
+    total_shops_count;
+    total_buyers_count;
+    monthly_shops_count;
+    monthly_buyers_count;
+  }> {
+    const usersCount = await this.usersService.countUsers(date);
 
     return {
-      shops_count: usersCount.shops_count,
-      buyers_count: usersCount.buyers_count,
+      total_shops_count: usersCount.total_shops_count,
+      total_buyers_count: usersCount.total_buyers_count,
+      monthly_shops_count: usersCount.monthly_shops_count,
+      monthly_buyers_count: usersCount.monthly_buyers_count,
     };
   }
 
-  async findTotalTransactions(
-    date: Date,
-  ): Promise<{ monthly_transactions: number; weekly_transactions: number }> {
-    const monthlyTransactions =
+  async findTransactionsReport(date: Date): Promise<{
+    monthly_total_transactions: number;
+    yearly_total_transactions: number;
+    monthly_count_transactions: number;
+    yearly_count_transactions: number;
+  }> {
+    const monthlyTotalTransactions =
       await this.transactionsService.totalAllTransactionsPerMonth(date);
 
-    const weeklyTransactions =
-      await this.transactionsService.totalAllTransactionsPerWeek(date);
+    // const weeklyTotalTransactions =
+    //   await this.transactionsService.totalAllTransactionsPerWeek(date);
+
+    const monthlyCountTransactions =
+      await this.transactionsService.countAllTransactionsPerMonth(date);
+
+    // const weeklyCountTransactions =
+    //   await this.transactionsService.countAllTransactionsPerWeek(date);
+
+    const yearlyTotalTransactions =
+      await this.transactionsService.totalAllTransactionsPerYear(date);
+
+    const yearlyCountTransactions =
+      await this.transactionsService.countAllTransactionsPerYear(date);
 
     return {
-      monthly_transactions: monthlyTransactions,
-      weekly_transactions: weeklyTransactions,
+      monthly_total_transactions: monthlyTotalTransactions,
+      yearly_total_transactions: yearlyTotalTransactions,
+      monthly_count_transactions: monthlyCountTransactions,
+      yearly_count_transactions: yearlyCountTransactions,
     };
   }
 

@@ -22,77 +22,57 @@ import { ErrorResponse, SuccessResponse } from '../app.service';
 export class AdministratorsController {
   constructor(private readonly administratorsService: AdministratorsService) {}
 
-  @Get('count-transactions')
+  @Get('users-report')
   @Roles(ConstRole.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async findAllTransactionsCount(
-    @Query('date') date: string,
-  ): Promise<SuccessResponse | ErrorResponse> {
+  async findUsersReport(@Query('date') date: string) {
     try {
       const parseDate = new Date(date);
       if (isNaN(parseDate.getTime())) {
         return {
-          message: 'Jumlah transaksi gagal didapatkan',
+          message: 'Laporan user gagal didapatkan',
           errors: ['Tanggal tidak valid'],
         };
       }
 
-      const count = await this.administratorsService.findAllTransactionsCount(
+      const report = await this.administratorsService.findUsersReport(
         parseDate,
       );
       return {
-        message: 'Jumlah transaksi berhasil didapatkan',
-        data: count,
+        message: 'Laporan user berhasil didapatkan',
+        data: report,
       };
     } catch (error) {
       return {
-        message: 'Jumlah transaksi gagal didapatkan',
+        message: 'Laporan user gagal didapatkan',
         errors: error,
       };
     }
   }
 
-  @Get('count-users')
+  @Get('transactions-report')
   @Roles(ConstRole.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async findAllUsersCount() {
-    try {
-      const count = await this.administratorsService.findAllUsersCount();
-      return {
-        message: 'Jumlah user berhasil didapatkan',
-        data: count,
-      };
-    } catch (error) {
-      return {
-        message: 'Jumlah user gagal didapatkan',
-        errors: error,
-      };
-    }
-  }
-
-  @Get('total-transactions')
-  @Roles(ConstRole.ADMIN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  async findTotalTransactions(@Query('date') date: string) {
+  async findTransactionsReport(@Query('date') date: string) {
     try {
       const parseDate = new Date(date);
       if (isNaN(parseDate.getTime())) {
         return {
-          message: 'Total transaksi gagal didapatkan',
+          message: 'Laporan transaksi gagal didapatkan',
           errors: ['Tanggal tidak valid'],
         };
       }
 
-      const count = await this.administratorsService.findTotalTransactions(
+      const report = await this.administratorsService.findTransactionsReport(
         parseDate,
       );
       return {
-        message: 'Total transaksi berhasil didapatkan',
-        data: count,
+        message: 'Laporan transaksi berhasil didapatkan',
+        data: report,
       };
     } catch (error) {
       return {
-        message: 'Total transaksi gagal didapatkan',
+        message: 'Laporan transaksi gagal didapatkan',
         errors: error,
       };
     }
