@@ -3,7 +3,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from './entities/category.entity';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 
 @Injectable()
 export class CategoriesService {
@@ -23,7 +23,13 @@ export class CategoriesService {
     return category;
   }
 
-  async findAll(limit: number): Promise<Category[]> {
+  async findAll(limit: number, role: string): Promise<Category[]> {
+    if (role === 'seller') {
+      return await this.categoriesRepository.find({
+        take: limit,
+        where: { id: Not(1) },
+      });
+    }
     if (limit) {
       return await this.categoriesRepository.find({
         take: limit,

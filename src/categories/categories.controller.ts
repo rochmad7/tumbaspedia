@@ -35,7 +35,10 @@ export class CategoriesController {
   @Get()
   async findAll(@Query() query): Promise<SuccessResponse | ErrorResponse> {
     try {
-      const categories = await this.categoriesService.findAll(query['limit']);
+      const categories = await this.categoriesService.findAll(
+        query['limit'],
+        query['role'],
+      );
       return {
         message: 'Data kategori berhasil diambil',
         data: categories,

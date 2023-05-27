@@ -25,4 +25,6 @@ export class CreateProductDto {
   category_id: number;
 
   shop_id: number;
+
+  old_category_id: number;
 }

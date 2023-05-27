@@ -63,4 +63,7 @@ export class Product {
     (product_pictures) => product_pictures.product,
   )
   product_pictures: ProductPicture;
+
+  @Column({ nullable: true })
+  old_category_id: number;
 }

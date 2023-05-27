@@ -182,6 +182,9 @@ export class ProductsService {
       ...(updateProductDto.product_picture && {
         product_picture: updateProductDto.product_picture,
       }),
+      ...(updateProductDto.old_category_id && {
+        old_category_id: updateProductDto.old_category_id,
+      }),
     });
     if (updateProduct.affected === 0) {
       throw new NotFoundException('Product not found');

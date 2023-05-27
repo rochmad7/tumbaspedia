@@ -112,12 +112,50 @@ export class ProductsController {
     @UploadedFile() file: Express.Multer.File,
   ): Promise<SuccessResponse | ErrorResponse> {
     const productOwned = await this.productsService.findOne(+id);
-    if (productOwned.shop.id !== req.user.shop.id) {
+    if (
+      req.user.role.id !== ConstRole.ADMIN &&
+      productOwned.shop.id !== req.user.shop.id
+    ) {
       throw new NotFoundException('Produk tidak ditemukan');
     }
 
     try {
       await this.productsService.update(+id, updateProductDto, file);
+      return {
+        message: 'Produk berhasil diubah',
+        data: null,
+      };
+    } catch (error) {
+      return {
+        message: 'Produk gagal diubah',
+        errors: error,
+      };
+    }
+  }
+
+  @Patch(':id/promote')
+  @Roles(ConstRole.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async promote(
+    @Param('id') id: string,
+    @Req() req,
+    @Body('is_promoted') isPromoted: boolean,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    const product = await this.productsService.findOne(+id);
+    if (product === undefined) {
+      throw new NotFoundException('Produk tidak ditemukan');
+    }
+
+    try {
+      const updateDto = new UpdateProductDto();
+      if (isPromoted) {
+        updateDto.category_id = 1;
+        updateDto.old_category_id = product.category.id;
+      } else {
+        updateDto.category_id = product.old_category_id;
+      }
+
+      await this.productsService.update(+id, updateDto);
       return {
         message: 'Produk berhasil diubah',
         data: null,
