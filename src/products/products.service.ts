@@ -101,20 +101,20 @@ export class ProductsService {
       whereQuery += ` AND LOWER(product.name) LIKE '%${search.toLowerCase()}%'`;
       if (shopId) {
         if (categoryId) {
-          whereQuery += ` AND product.category_id = ${categoryId}`;
+          whereQuery += ` AND (product.category_id = ${categoryId} OR product.old_category_id = ${categoryId})`;
         }
         whereQuery += ` AND product.shop_id = ${shopId}`;
       } else if (categoryId) {
-        whereQuery += ` AND product.category_id = ${categoryId}`;
+        whereQuery += ` AND (product.category_id = ${categoryId} OR product.old_category_id = ${categoryId})`;
       }
     } else {
       if (shopId) {
         if (categoryId) {
-          whereQuery += ` AND product.category_id = ${categoryId}`;
+          whereQuery += ` AND (product.category_id = ${categoryId} OR product.old_category_id = ${categoryId})`;
         }
         whereQuery += ` AND product.shop_id = ${shopId}`;
       } else if (categoryId) {
-        whereQuery += ` AND product.category_id = ${categoryId}`;
+        whereQuery += ` AND (product.category_id = ${categoryId} OR product.old_category_id = ${categoryId})`;
       }
     }
 
@@ -178,7 +178,9 @@ export class ProductsService {
         description: updateProductDto.description,
       }),
       ...(updateProductDto.price && { price: updateProductDto.price }),
-      ...(updateProductDto.stock && { stock: updateProductDto.stock }),
+      ...(typeof updateProductDto.stock !== 'undefined'
+        ? { stock: updateProductDto.stock }
+        : { stock: 0 }),
       ...(updateProductDto.product_picture && {
         product_picture: updateProductDto.product_picture,
       }),
