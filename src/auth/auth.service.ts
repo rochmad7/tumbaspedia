@@ -213,6 +213,7 @@ export class AuthService {
 
     const token = this.jwtService.sign(
       {
+        id: user.id,
         email: user.email,
       },
       {
@@ -225,9 +226,7 @@ export class AuthService {
 
   async resetPassword(token: string, password: string): Promise<User> {
     const verifyToken = this.jwtService.verify(token);
-    const user = await this.usersService.findOneByEmailNotVerified(
-      verifyToken.email,
-    );
+    const user = await this.usersService.findOneById(verifyToken.id);
     if (user) {
       await this.usersService.update(user.id, {
         password: await bcrypt.hash(password, 10),
