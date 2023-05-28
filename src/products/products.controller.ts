@@ -151,8 +151,10 @@ export class ProductsController {
       if (isPromoted) {
         updateDto.category_id = 1;
         updateDto.old_category_id = product.category.id;
+        updateDto.promoted_at = new Date();
       } else {
         updateDto.category_id = product.old_category_id;
+        updateDto.promoted_at = null;
       }
 
       await this.productsService.update(+id, updateDto);

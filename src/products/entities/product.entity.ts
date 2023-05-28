@@ -66,4 +66,7 @@ export class Product {
 
   @Column({ nullable: true })
   old_category_id: number;
+
+  @Column({ nullable: true })
+  promoted_at: Date;
 }

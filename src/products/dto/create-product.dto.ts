@@ -27,4 +27,6 @@ export class CreateProductDto {
   shop_id: number;
 
   old_category_id: number;
+
+  promoted_at: Date;
 }

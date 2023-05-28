@@ -185,6 +185,9 @@ export class ProductsService {
       ...(updateProductDto.old_category_id && {
         old_category_id: updateProductDto.old_category_id,
       }),
+      ...(updateProductDto.promoted_at && {
+        promoted_at: updateProductDto.promoted_at,
+      }),
     });
     if (updateProduct.affected === 0) {
       throw new NotFoundException('Product not found');
