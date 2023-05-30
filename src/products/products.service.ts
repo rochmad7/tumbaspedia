@@ -178,7 +178,7 @@ export class ProductsService {
         description: updateProductDto.description,
       }),
       ...(updateProductDto.price && { price: updateProductDto.price }),
-      ...(typeof updateProductDto.stock !== 'undefined'
+      ...(typeof updateProductDto.stock !== undefined
         ? { stock: updateProductDto.stock }
         : { stock: 0 }),
       ...(updateProductDto.product_picture && {
